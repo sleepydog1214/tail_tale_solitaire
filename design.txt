@@ -1,0 +1,126 @@
+Here's a complete, ready-to-use blueprint to build your own platform-independent version of a Solitaire Cash-style game (call it Solitaire Royale or Cashless Solitaire). Everything is designed for unlimited fake currency (“Coins”), no real gambling, same-deck fairness, 5-minute timed matches, and competitive leaderboards.1. Software Design Document (SDD) – High-Level OverviewProject Name: Solitaire Royale
+Version: 1.0
+Goal: A skill-based, multiplayer Klondike Solitaire (3-card draw) with timed 5-minute matches, identical decks for all players, points for moves + big time bonus, and a fake-currency economy (unlimited Coins).Core FeaturesSingle-player practice (unlimited time or timed)
+Multiplayer tournaments (2–8 players, same deck)
+5-minute countdown
+Scoring: base points + time bonus
+Leaderboard per match → 1st/2nd/3rd (sometimes 4th) get Coin prizes
+Fake economy: free daily coins, entry fees (10–100 Coins), big prize pools
+Progression: XP levels, daily streaks, “Clubs” (optional later)
+Cross-platform: Web, iOS, Android, Desktop (one codebase)
+
+Non-Goals
+Real money, ads, limited redeals, bots in cash tournaments.2. Game Rules & Scoring (Solitaire Cash style)Rules (Turn-3 Klondike – unlimited redeals)Same as the Klondike rules I gave you earlier, with 3-card draw.
+Unlimited passes through the stock.
+You may move cards back from foundation to tableau.
+Game ends automatically at 5:00 or when you tap “Finish” (if no moves left or you solved it).
+
+Scoring System (exact numbers copied from real Solitaire Cash for authenticity)Moving any card to a foundation → +100 points
+Moving a card within the tableau (or waste → tableau) that uncovers a new face-down card → +20 points
+Full solve (all 52 cards in foundations) → base score includes the 5,200 from foundations
+Reshuffle (when stock runs out) → –20 points (only once per cycle if you want to penalize spam)
+Undo → –points equal to the last move (or just disable undo in competitive mode)
+
+Time Bonus (huge incentive to finish fast)
+Time Bonus = Base Score × (Time Remaining / 300)
+Example: Base 6,000, finish in 1:30 (90 s remaining) → bonus = 6,000 × 90/300 = +1,800
+Total score = 7,800Final Score = Base + Time Bonus
+If you “Exit” early when stuck → still get time bonus (encourages clean finish).Match OutcomeAll players get the exact same deck (seeded shuffle)
+Highest final score wins
+Prize distribution example (8-player match, 50-coin entry):1st: 200 coins
+2nd: 100 coins
+3rd: 50 coins
+4th: 20 coins (sometimes)
+Rest: 0
+
+3. Architecture SpecificationHigh-level Architecture (Client-Server, real-time)
+
+Clients (React/Web, React Native, Flutter) 
+        ↓ WebSocket / Firebase Realtime
+Backend (Firebase or Node + Socket.io)
+        ↓
+Database (Firestore / MongoDB)
+
+ComponentsGame Engine (Client-side only)Pure JS/TS class: KlondikeGame
+Deterministic shuffle from seed
+Move validation, animation, undo stack, auto-complete to foundations (optional)
+
+Lobby / Matchmaking ServerCreate/join tournament (choose entry fee)
+Skill-based matchmaking (Elo-like or simple bucket by level)
+When enough players → generate one seed → broadcast to room
+
+Game RoomReal-time clock sync
+Players play independently
+At end of 5 min or when player finishes → client submits signed score + proof (move list or final foundation state)
+Server validates (optional, for anti-cheat) and ranks
+
+Economy & ProgressionUser profile (Coins, XP, level, daily login streak)
+Cloud Functions for prize distribution
+
+Offline ModePractice games stored locally (IndexedDB / AsyncStorage)
+
+Data Flow (Multiplayer Match)Player joins lobby → pays entry fee in Coins
+Server waits for N players → picks seed → sends to all clients
+Clients load identical board
+Timer starts (server-authoritative)
+Every 10 s: optional heartbeat of current base score
+Player finishes or timer hits 0 → client sends final score
+Server calculates prizes → updates balances → shows leaderboard
+
+4. Recommended Tech Stack (Platform-Independent)Option A – Fastest to MVP (Recommended)Frontend: React + TypeScript + Vite (web)
+→ Wrap with Capacitor → native iOS/Android apps in minutes
+→ Or Tauri → desktop apps
+UI: Tailwind CSS + Headless UI + react-dnd (drag & drop cards)
+Game rendering: HTML/CSS canvas or pure DOM (SVG cards work great)
+Backend & Real-time: Firebase (Auth, Firestore, Cloud Functions, Realtime Database)
+State: Zustand or Jotai
+Seeding: seedrandom library (deterministic shuffle)
+
+Option B – Fully Native FeelFlutter (one codebase for Web + iOS + Android + Desktop)
+Firebase or Supabase
+
+Option C – Pure Web + Self-hostedNext.js 15 (App Router)
+Socket.io + Node/Express
+PostgreSQL + Prisma
+
+5. Ready-to-Copy Prompts for AI Code GenerationPrompt 1 – Core Game Engine
+
+Build a complete TypeScript class `KlondikeGame` for 3-card-draw Klondike Solitaire.
+- Accept a seed string → deterministic shuffle (use seedrandom)
+- Methods: deal(), drawFromStock(), moveCard(from, to), canAutoMoveToFoundation(), isSolved()
+- Return full game state as JSON every move
+- Include scoring: +100 to foundation, +20 for uncovering, time bonus formula
+- Support multi-card moves and foundation ↔ tableau moves
+
+Prompt 2 – React Game Component
+
+Create a React + TypeScript component for the solitaire board using react-dnd.
+- 7 tableau piles, 4 foundations, stock, waste (show top 3 for turn-3)
+- Drag & drop single cards or valid sequences
+- Click-to-move auto-play logic
+- Timer display (5:00 countdown)
+- "Finish" button
+- Visual feedback for valid/invalid drops
+
+Prompt 3 – Multiplayer Match Room (Firebase)
+
+Using Firebase v10, implement a match room:
+- Create tournament with entry fee X coins
+- When N players join → generate seed, write to Firestore doc
+- Subscribe to timer and final scores
+- At end, rank players, distribute coins via transaction
+
+Prompt 4 – Deterministic Deck (shared across clients)
+
+Write a function that takes a seed string and returns a shuffled 52-card deck array in the exact same order on every client. Use seedrandom. Cards as objects {rank, suit}.
+
+Prompt 5 – Full Project Scaffold
+
+Generate a Vite + React + TypeScript + Tailwind + Firebase starter project structure for a multiplayer Solitaire game with the rules above.
+
+Next Steps for YouStart with the single-player game engine + UI (Prompts 1 & 2) → you’ll have a working solitaire in <2 hours.
+Add Firebase auth + simple practice mode.
+Then implement the multiplayer lobby (Prompt 3).
+
+You now have everything an AI (me, Claude, GPT, Cursor, etc.) needs to generate the entire app piece by piece.Want me to generate the actual code for the KlondikeGame class right now, or the Firebase matchmaking schema? Just say the word!
+

@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+	padding: 12px;
+	background: #0f172a0a;
+}
+
+.board {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	user-select: none;
+}
+
+.topRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.leftTop {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.foundations {
+	display: flex;
+	gap: 12px;
+}
+
+.tableau {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(90px, 1fr));
+	gap: 12px;
+}
+
+.pile {
+	min-height: 120px;
+	padding: 6px;
+	border: 1px solid rgba(15, 23, 42, 0.25);
+	border-radius: 10px;
+	position: relative;
+	background: rgba(255, 255, 255, 0.55);
+}
+
+.pile.validDrop {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+.pile.invalidDrop {
+	outline: 2px dashed currentColor;
+	outline-offset: 2px;
+	opacity: 0.75;
+}
+
+.pileTitle {
+	font-size: 12px;
+	opacity: 0.75;
+	margin-bottom: 6px;
+}
+
+.card {
+	width: 84px;
+	height: 114px;
+	border: 1px solid rgba(15, 23, 42, 0.28);
+	border-radius: 12px;
+	background: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	position: relative;
+	box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+	transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+}
+
+.card:active {
+	transform: translateY(-1px);
+}
+
+.cardBackImg {
+	position: absolute;
+	inset: 6px;
+	width: calc(100% - 12px);
+	height: calc(100% - 12px);
+	border-radius: 10px;
+	object-fit: cover;
+}
+
+.cardFace {
+	position: absolute;
+	inset: 0;
+	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.cardCorner {
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.cardCorner.bottomRight {
+	align-self: flex-end;
+	transform: rotate(180deg);
+}
+
+.cardCenter {
+	font-size: 34px;
+	font-weight: 700;
+	opacity: 0.2;
+	align-self: center;
+}
+
+.card.red {
+	color: #b00020;
+}
+
+.card.black {
+	color: #111;
+}
+
+.card.draggable {
+	cursor: grab;
+}
+
+.card.draggable:hover {
+	transform: translateY(-4px) scale(1.03);
+}
+
+.wasteFan {
+	position: relative;
+	height: 122px;
+	width: 160px;
+}
+
+.wasteFanItem {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.cardStack {
+	position: relative;
+	min-height: 132px;
+}
+
+.cardInTableau {
+	position: absolute;
+	left: 0;
+}
+
+.foundationPlaceholder {
+	width: 84px;
+	height: 114px;
+	border-radius: 12px;
+	border: 2px dashed rgba(15, 23, 42, 0.25);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 32px;
+	opacity: 0.5;
+}
+
+.controls {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+button {
+	padding: 8px 10px;
+	border: 1px solid currentColor;
+	border-radius: 6px;
+	background: transparent;
+	cursor: pointer;
+}
+
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}

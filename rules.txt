@@ -1,0 +1,56 @@
+Here is a clear, structured, and precise list of rules for Klondike Solitaire (the classic version most people mean when they say "Solitaire", as seen in Windows, Bicycle cards, and most digital implementations). This format is ready to copy-paste when you ask an AI to implement a platform-independent game (web, mobile, desktop, etc.).You can decide between the two most common variants: Turn 1 (easier, draw one card) or Turn 3 (classic/harder, draw three cards). Many modern apps let the player choose.Klondike Solitaire – Rules Specification for Game Implementation1. Deck and Cards  Standard 52-card deck (no jokers).  
+4 suits: Hearts (), Diamonds () — red; Clubs (), Spades () — black.  
+Ranks: Ace (low) → 2 → 3 → … → 10 → Jack → Queen → King (high).
+
+2. Layout / Setup  Tableau: 7 piles (columns), left to right.  Pile 1: 1 card (face up)  
+Pile 2: 2 cards (top card face up, bottom face down)  
+…  
+Pile 7: 7 cards (top card face up, others face down)
+→ Total 28 cards dealt.
+
+Stock (draw pile): remaining 24 cards, face down.  
+Waste (discard/talon pile): starts empty, cards drawn here from stock. Only the top card (or top 1–3 depending on variant) is playable.  
+Foundations: 4 empty piles (one per suit), usually placed above the tableau. Build up by suit from Ace to King.
+
+3. Objective (Win Condition)
+Move all 52 cards to the 4 foundation piles, each built in ascending order from Ace → King in the same suit.4. Tableau Building Rules  Build descending sequences (King → Queen → … → Ace).  
+Must alternate colors (red on black, black on red).
+→ Example legal: black 8 on red 9, red Jack on black Queen.
+→ Illegal: same color (7 on 8), or ascending (7 on 6).  
+Any face-up card or properly sequenced group of face-up cards can be moved as a unit to another tableau pile (if the move follows the above rules).  
+When the last face-up card of a tableau pile is moved, the next face-down card (if any) is turned face up and becomes playable.  
+An empty tableau pile may only be filled with a King (or a descending sequence starting with a King).
+
+5. Foundation Building Rules  Foundations build up by suit (same suit only).  
+Must start with Ace.  
+Then 2, 3, 4, … up to King of the same suit.  
+Cards can be moved from tableau or waste to foundations whenever legal.  
+Cards can (in most implementations) be moved back from foundation to tableau if needed (this is allowed in standard Klondike and helps solve many games).
+
+6. Stock & Waste (Draw Rules) – Choose One Variant
+Variant A – Turn 1 (easier, more winnable, common in many apps)  Draw 1 card at a time from stock to waste (face up).  
+Only the top waste card is playable (to tableau or foundation).  
+When stock is empty, player may turn the waste pile over (face down) to become the new stock — unlimited redeals / passes allowed (most common modern rule).
+
+Variant B – Turn 3 (classic/harder, Windows 3.1/95/98/2000/XP default)  Draw 3 cards at a time from stock to waste (face up, in order).  
+Only the topmost of the three cards is playable.  
+If the top card is played, the next one becomes available, and so on.  
+When fewer than 3 cards remain in stock, draw all remaining cards (1 or 2).  
+When stock is empty, turn the waste pile over (face down) to become new stock — unlimited redeals allowed (most common modern rule). Some strict versions limit to 3 passes only.
+
+7. Additional Common Rules & Clarifications  No limit on the number of times you may redeal the waste → stock (unless you deliberately want a very strict version).  
+You may move partial or full descending alternating-color sequences as one unit (multi-card drag).  
+Auto-complete / auto-move to foundation is optional (many apps do it for convenience, but the rules allow manual control).  
+No other piles or cells (unlike FreeCell).  
+Game is lost (blocked) when no legal moves remain and stock is empty (or no more useful redeals).
+
+8. Victory / Loss  Win: All 52 cards are in the foundations (Ace to King of each suit).  
+Loss: No legal moves left and no cards remain in stock (or redeals exhausted in limited-redeal variants).
+
+This covers the standard rules used in ~95% of digital Klondike implementations. When giving this to an AI, you can add preferences like:"Use Turn 3 variant by default, but add a settings toggle for Turn 1."  
+"Allow unlimited redeals."  
+"Implement drag-and-drop for single cards and sequences."  
+"Include undo (at least 1–3 steps) and auto-complete to foundations when safe."
+
+Let me know if you want the rules shortened, made stricter (limited redeals), or adjusted for a specific platform/style!
+
