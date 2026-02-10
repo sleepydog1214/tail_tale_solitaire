@@ -15,6 +15,19 @@ body {
 	background: #0f172a0a;
 }
 
+.home {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	max-width: 520px;
+}
+
+.homeTitle {
+	margin: 0;
+	font-size: 28px;
+	font-weight: 800;
+}
+
 .board {
 	display: flex;
 	flex-direction: column;

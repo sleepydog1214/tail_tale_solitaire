@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 114" width="84" height="114">
+  <defs>
+    <radialGradient id="nebBack" cx="35%" cy="28%" r="70%">
+      <stop offset="0" stop-color="#2b1cff" stop-opacity="0.35"/>
+      <stop offset="0.35" stop-color="#ff2bd6" stop-opacity="0.22"/>
+      <stop offset="0.75" stop-color="#00e6ff" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="backBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0b12"/>
+      <stop offset="1" stop-color="#05050a"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="0.7" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+<rect x="0" y="0" width="84" height="114" rx="6" ry="6" fill="#ffffff"/>
+<g>
+<circle cx="1.86" cy="88.89" r="0.15" fill="#111111" opacity="0.06"/>
+<circle cx="6.18" cy="42.31" r="0.45" fill="#111111" opacity="0.04"/>
+<circle cx="20.87" cy="62.56" r="0.45" fill="#111111" opacity="0.12"/>
+<circle cx="25.53" cy="66.66" r="0.17" fill="#111111" opacity="0.09"/>
+<circle cx="40.61" cy="93.28" r="0.53" fill="#111111" opacity="0.12"/>
+<circle cx="37.88" cy="21.43" r="0.45" fill="#111111" opacity="0.07"/>
+<circle cx="2.05" cy="72.47" r="0.23" fill="#111111" opacity="0.08"/>
+<circle cx="77.50" cy="57.99" r="0.57" fill="#111111" opacity="0.09"/>
+<circle cx="43.29" cy="68.46" r="0.32" fill="#111111" opacity="0.04"/>
+<circle cx="13.43" cy="66.51" r="0.32" fill="#111111" opacity="0.11"/>
+<circle cx="71.22" cy="97.30" r="0.35" fill="#111111" opacity="0.06"/>
+<circle cx="23.32" cy="49.89" r="0.26" fill="#111111" opacity="0.04"/>
+<circle cx="48.54" cy="104.50" r="0.39" fill="#111111" opacity="0.12"/>
+<circle cx="80.24" cy="9.24" r="0.23" fill="#111111" opacity="0.12"/>
+<circle cx="75.59" cy="92.92" r="0.53" fill="#111111" opacity="0.08"/>
+<circle cx="69.68" cy="13.04" r="0.23" fill="#111111" opacity="0.10"/>
+<circle cx="45.99" cy="75.00" r="0.26" fill="#111111" opacity="0.11"/>
+<circle cx="7.30" cy="29.00" r="0.35" fill="#111111" opacity="0.13"/>
+<circle cx="44.17" cy="103.59" r="0.25" fill="#111111" opacity="0.11"/>
+<circle cx="14.04" cy="86.05" r="0.28" fill="#111111" opacity="0.06"/>
+<circle cx="35.33" cy="15.37" r="0.49" fill="#111111" opacity="0.06"/>
+<circle cx="47.91" cy="86.87" r="0.21" fill="#111111" opacity="0.10"/>
+<circle cx="77.58" cy="15.71" r="0.33" fill="#111111" opacity="0.05"/>
+<circle cx="79.57" cy="89.46" r="0.42" fill="#111111" opacity="0.07"/>
+<circle cx="62.58" cy="10.13" r="0.18" fill="#111111" opacity="0.10"/>
+<circle cx="81.72" cy="76.23" r="0.51" fill="#111111" opacity="0.11"/>
+<circle cx="17.03" cy="28.82" r="0.48" fill="#111111" opacity="0.10"/>
+<circle cx="64.52" cy="3.18" r="0.29" fill="#111111" opacity="0.12"/>
+<circle cx="73.28" cy="45.36" r="0.30" fill="#111111" opacity="0.08"/>
+<circle cx="13.10" cy="108.47" r="0.27" fill="#111111" opacity="0.10"/>
+<circle cx="54.17" cy="6.18" r="0.23" fill="#111111" opacity="0.08"/>
+<circle cx="30.35" cy="102.62" r="0.28" fill="#111111" opacity="0.11"/>
+<circle cx="36.35" cy="59.97" r="0.14" fill="#111111" opacity="0.04"/>
+<circle cx="74.18" cy="22.48" r="0.32" fill="#111111" opacity="0.11"/>
+<circle cx="68.44" cy="85.19" r="0.43" fill="#111111" opacity="0.05"/>
+<circle cx="19.09" cy="82.54" r="0.39" fill="#111111" opacity="0.03"/>
+</g>
+<rect x="1.6" y="1.6" width="80.8" height="110.8" rx="5.0" ry="5.0" fill="none" stroke="#2a2f3a" stroke-width="1.2"/>
+<rect x="3.4" y="3.4" width="77.2" height="107.2" rx="4.2" ry="4.2" fill="none" stroke="#b9bec9" stroke-width="0.9" opacity="0.95"/>
+<g>
+<rect x="4.0" y="4.0" width="21.5" height="18.5" rx="2.2" ry="2.2" fill="#ffffff" stroke="#c8ccd6" stroke-width="0.6" opacity="0.98"/>
+
+<g>
+<rect x="6.20" y="5.90" width="6.99" height="1.22" rx="0.61" ry="0.61" fill="#111111"/>
+<rect x="6.20" y="12.03" width="6.99" height="1.22" rx="0.61" ry="0.61" fill="#111111"/>
+<rect x="6.20" y="5.90" width="1.22" height="11.78" rx="0.61" ry="0.61" fill="#111111"/>
+<rect x="11.98" y="5.90" width="1.22" height="11.78" rx="0.61" ry="0.61" fill="#111111"/>
+</g>
+<circle cx="17.992" cy="13.450000000000001" r="1.716" fill="#111111"/>
+<circle cx="16.042" cy="15.556000000000001" r="1.716" fill="#111111"/>
+<circle cx="19.942" cy="15.556000000000001" r="1.716" fill="#111111"/>
+<path d="M 17.992 15.790000000000001 C 18.382 17.116, 18.382 19.144, 17.992 20.236 C 17.602 19.144, 17.602 17.116, 17.992 15.790000000000001 Z" fill="#111111"/>
+</g>
+<g transform="rotate(180 68.00 97.00)">
+<rect x="56.0" y="84.0" width="21.5" height="18.5" rx="2.2" ry="2.2" fill="#ffffff" stroke="#c8ccd6" stroke-width="0.6" opacity="0.98"/>
+
+<g>
+<rect x="58.20" y="85.90" width="6.99" height="1.22" rx="0.61" ry="0.61" fill="#111111"/>
+<rect x="58.20" y="92.03" width="6.99" height="1.22" rx="0.61" ry="0.61" fill="#111111"/>
+<rect x="58.20" y="85.90" width="1.22" height="11.78" rx="0.61" ry="0.61" fill="#111111"/>
+<rect x="63.98" y="85.90" width="1.22" height="11.78" rx="0.61" ry="0.61" fill="#111111"/>
+</g>
+<circle cx="69.99199999999999" cy="93.45" r="1.716" fill="#111111"/>
+<circle cx="68.04199999999999" cy="95.55600000000001" r="1.716" fill="#111111"/>
+<circle cx="71.942" cy="95.55600000000001" r="1.716" fill="#111111"/>
+<path d="M 69.99199999999999 95.79 C 70.38199999999999 97.116, 70.38199999999999 99.144, 69.99199999999999 100.236 C 69.60199999999999 99.144, 69.60199999999999 97.116, 69.99199999999999 95.79 Z" fill="#111111"/>
+</g>
+<g>
+<ellipse cx="42.00" cy="57.00" rx="18.00" ry="6.60" fill="none" stroke="#9aa0ab" stroke-width="0.7" opacity="0.55"/>
+<ellipse cx="42.00" cy="57.00" rx="6.60" ry="18.00" fill="none" stroke="#9aa0ab" stroke-width="0.7" opacity="0.35"/>
+<circle cx="42.0" cy="51.9" r="4.488" fill="#111111"/>
+<circle cx="36.9" cy="57.408" r="4.488" fill="#111111"/>
+<circle cx="47.1" cy="57.408" r="4.488" fill="#111111"/>
+<path d="M 42.0 58.02 C 43.02 61.488, 43.02 66.792, 42.0 69.648 C 40.98 66.792, 40.98 61.488, 42.0 58.02 Z" fill="#111111"/>
+</g>
+</svg>

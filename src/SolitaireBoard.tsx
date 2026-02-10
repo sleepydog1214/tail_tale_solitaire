@@ -38,7 +38,7 @@ function cardLabel(card: Card): string {
 
 const CARD_BACK_URL = "/cards/back.svg";
 // Optional: drop a full deck into /public/cards/front/{card.id}.svg and enable this.
-const USE_CARD_FRONT_IMAGES = false;
+const USE_CARD_FRONT_IMAGES = true;
 
 function cardFrontUrl(card: Card): string {
 	return `/cards/front/${card.id}.svg`;
@@ -323,9 +323,12 @@ function FoundationPile(props: {
 export function SolitaireBoard(props: {
 	seed: string;
 	onStateChange?: (state: GameState) => void;
+	onRequestHome?: () => void;
+	onRequestNewGame?: () => void;
 }) {
-	const { seed, onStateChange } = props;
+	const { seed, onStateChange, onRequestHome, onRequestNewGame } = props;
 	const gameRef = useRef<KlondikeGame | null>(null);
+	const stateRef = useRef<GameState | null>(null);
 
 	const game = useMemo(() => {
 		return new KlondikeGame(seed);
@@ -333,6 +336,10 @@ export function SolitaireBoard(props: {
 
 	const [state, setState] = useState<GameState | null>(null);
 	const [tick, setTick] = useState(0);
+
+	useEffect(() => {
+		stateRef.current = state;
+	}, [state]);
 
 	useEffect(() => {
 		gameRef.current = game;
@@ -349,8 +356,10 @@ export function SolitaireBoard(props: {
 	}, []);
 
 	useEffect(() => {
-		if (!state) return;
+		const current = stateRef.current;
+		if (!current) return;
 		// Refresh timer in state.
+		if (current.finishedAtMs !== null) return;
 		try {
 			const s = game.getState();
 			setState(s);
@@ -358,19 +367,22 @@ export function SolitaireBoard(props: {
 		} catch {
 			// ignore
 		}
+		// Only re-run on tick; state changes are expected.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tick]);
+	}, [tick, game, onStateChange]);
 
-	if (!state) return null;
-
-	const disabled = state.finishedAtMs !== null || state.timeRemainingSeconds <= 0;
-
-	// Auto-finish if timer hits zero.
-	if (state.finishedAtMs === null && state.timeRemainingSeconds <= 0) {
+	useEffect(() => {
+		if (!state) return;
+		if (state.finishedAtMs !== null) return;
+		if (state.timeRemainingSeconds > 0) return;
 		const s = game.finish();
 		setState(s);
 		onStateChange?.(s);
-	}
+	}, [game, onStateChange, state]);
+
+	if (!state) return null;
+
+	const isFinished = state.finishedAtMs !== null || state.timeRemainingSeconds <= 0;
 
 	const wasteTop3 = getTop3Waste(state.waste);
 	const wasteTop = state.waste.length ? state.waste[state.waste.length - 1] : null;
@@ -379,16 +391,26 @@ export function SolitaireBoard(props: {
 		<div className="board">
 			<div className="controls">
 				<div>Time: {formatTime(state.timeRemainingSeconds)}</div>
-				<button
-					onClick={() => {
-						const s = game.finish();
-						setState(s);
-						onStateChange?.(s);
-					}}
-					disabled={disabled}
-				>
-					Finish
-				</button>
+				{!isFinished ? (
+					<button
+						onClick={() => {
+							const s = game.finish();
+							setState(s);
+							onStateChange?.(s);
+						}}
+					>
+						Finish
+					</button>
+				) : (
+					<>
+						<button onClick={onRequestHome} disabled={!onRequestHome}>
+							Home
+						</button>
+						<button onClick={onRequestNewGame} disabled={!onRequestNewGame}>
+							New Game
+						</button>
+					</>
+				)}
 			</div>
 
 			<div className="topRow">
@@ -397,9 +419,9 @@ export function SolitaireBoard(props: {
 						<div className="pileTitle">Stock ({state.stock.length})</div>
 						<div
 							className="card"
-							style={{ cursor: disabled ? "default" : "pointer" }}
+							style={{ cursor: isFinished ? "default" : "pointer" }}
 							onClick={() => {
-								if (disabled) return;
+								if (isFinished) return;
 								const s = game.drawFromStock();
 								setState(s);
 								onStateChange?.(s);
@@ -425,14 +447,14 @@ export function SolitaireBoard(props: {
 									>
 										<CardView
 											card={c}
-											draggable={!disabled && isTop}
+											draggable={!isFinished && isTop}
 											dragItem={
 												isTop
 													? { type: "CARD_STACK", from: { pile: "waste" }, cards: [c] }
 													: undefined
 											}
 											onClick={() => {
-												if (disabled) return;
+												if (isFinished) return;
 												if (!isTop) return;
 												const next = tryAutoMove(game, { pile: "waste" }, [c]);
 												if (next) {
@@ -455,7 +477,7 @@ export function SolitaireBoard(props: {
 							suit={suit}
 							pile={state.foundations[suit]}
 							game={game}
-							disabled={disabled}
+							disabled={isFinished}
 							onState={(next) => {
 								setState(next);
 								onStateChange?.(next);
@@ -473,7 +495,7 @@ export function SolitaireBoard(props: {
 						pile={pile}
 						state={state}
 						game={game}
-						disabled={disabled}
+						disabled={isFinished}
 						onState={(next) => {
 							setState(next);
 							onStateChange?.(next);
