@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { Card, GameState, PileRef, Suit } from "./KlondikeGame";
 import { KlondikeGame } from "./KlondikeGame";
+import { generateCardFrontSvg, generateCardBackSvg, svgToDataUri } from "./cardGen";
+import type { CardDesign } from "./cardGen";
 
 type DragItem = {
 	type: "CARD_STACK";
@@ -36,12 +38,12 @@ function cardLabel(card: Card): string {
 	return `${rank}${suitSymbol(card.suit)}`;
 }
 
-const CARD_BACK_URL = "/cards/back.svg";
-// Optional: drop a full deck into /public/cards/front/{card.id}.svg and enable this.
-const USE_CARD_FRONT_IMAGES = true;
+function cardFrontDataUri(card: Card, design: CardDesign): string {
+	return svgToDataUri(generateCardFrontSvg(card.suit, card.rank, design));
+}
 
-function cardFrontUrl(card: Card): string {
-	return `/cards/front/${card.id}.svg`;
+function cardBackDataUri(design: CardDesign): string {
+	return svgToDataUri(generateCardBackSvg(design));
 }
 
 function suitColor(card: Card): "red" | "black" {
@@ -111,10 +113,11 @@ function tryAutoMove(game: KlondikeGame, from: PileRef, movingCards: Card[]): Ga
 function CardView(props: {
 	card: Card;
 	draggable: boolean;
+	cardDesign: CardDesign;
 	onClick?: () => void;
 	dragItem?: DragItem;
 }) {
-	const { card, draggable, onClick, dragItem } = props;
+	const { card, draggable, cardDesign, onClick, dragItem } = props;
 
 	const [{ isDragging }, dragRef] = useDrag(
 		() => ({
@@ -139,25 +142,11 @@ function CardView(props: {
 			onClick={onClick}
 			style={{ opacity: isDragging ? 0.4 : 1 }}
 		>
-			{card.faceUp ? (
-				USE_CARD_FRONT_IMAGES ? (
-					<img className="cardBackImg" src={cardFrontUrl(card)} alt={cardLabel(card)} />
-				) : (
-					<div className="cardFace" aria-label={cardLabel(card)}>
-						<div className="cardCorner">
-							<div>{cardLabel(card).slice(0, -1)}</div>
-							<div>{suitSymbol(card.suit)}</div>
-						</div>
-						<div className="cardCenter">{suitSymbol(card.suit)}</div>
-						<div className="cardCorner bottomRight">
-							<div>{cardLabel(card).slice(0, -1)}</div>
-							<div>{suitSymbol(card.suit)}</div>
-						</div>
-					</div>
-				)
-			) : (
-				<img className="cardBackImg" src={CARD_BACK_URL} alt="Card back" />
-			)}
+ 		{card.faceUp ? (
+ 			<img className="cardBackImg" src={cardFrontDataUri(card, cardDesign)} alt={cardLabel(card)} />
+ 		) : (
+ 			<img className="cardBackImg" src={cardBackDataUri(cardDesign)} alt="Card back" />
+ 		)}
 		</div>
 	);
 }
@@ -168,9 +157,10 @@ function TableauPile(props: {
 	state: GameState;
 	game: KlondikeGame;
 	disabled: boolean;
+	cardDesign: CardDesign;
 	onState: (s: GameState) => void;
 }) {
-	const { index, pile, state, game, disabled, onState } = props;
+	const { index, pile, state, game, disabled, cardDesign, onState } = props;
 
 	const [{ isOver, canDrop }, dropRef] = useDrop(
 		() => ({
@@ -227,20 +217,21 @@ function TableauPile(props: {
 							className="cardInTableau"
 							style={{ top: pos * 24 }}
 						>
-							<CardView
-								card={card}
-								draggable={draggable}
-								dragItem={dragItem}
-								onClick={() => {
-									if (disabled) return;
-									if (!isFaceUp) return;
+ 						<CardView
+ 							card={card}
+ 							draggable={draggable}
+ 							cardDesign={cardDesign}
+ 							dragItem={dragItem}
+ 							onClick={() => {
+ 								if (disabled) return;
+ 								if (!isFaceUp) return;
 
-									const current = state.tableau[index];
-									const moving = current.slice(pos);
-									const next = tryAutoMove(game, from, moving);
-									if (next) onState(next);
-								}}
-							/>
+ 								const current = state.tableau[index];
+ 								const moving = current.slice(pos);
+ 								const next = tryAutoMove(game, from, moving);
+ 								if (next) onState(next);
+ 							}}
+ 						/>
 						</div>
 					);
 				})}
@@ -254,9 +245,10 @@ function FoundationPile(props: {
 	pile: Card[];
 	game: KlondikeGame;
 	disabled: boolean;
+	cardDesign: CardDesign;
 	onState: (s: GameState) => void;
 }) {
-	const { suit, pile, game, disabled, onState } = props;
+	const { suit, pile, game, disabled, cardDesign, onState } = props;
 
 	const [{ isOver, canDrop }, dropRef] = useDrop(
 		() => ({
@@ -300,17 +292,18 @@ function FoundationPile(props: {
 		<div ref={dropRef} className={pileClass}>
 			<div className="pileTitle">F {suitSymbol(suit)}</div>
 			{top ? (
-				<CardView
-					card={top}
-					draggable={!disabled}
-					dragItem={{ type: "CARD_STACK", from: { pile: "foundation", suit }, cards: [top] }}
-					onClick={() => {
-						if (disabled) return;
-						// Auto move from foundation only to tableau.
-						const next = tryAutoMove(game, { pile: "foundation", suit }, [top]);
-						if (next) onState(next);
-					}}
-				/>
+ 			<CardView
+ 				card={top}
+ 				draggable={!disabled}
+ 				cardDesign={cardDesign}
+ 				dragItem={{ type: "CARD_STACK", from: { pile: "foundation", suit }, cards: [top] }}
+ 				onClick={() => {
+ 					if (disabled) return;
+ 					// Auto move from foundation only to tableau.
+ 					const next = tryAutoMove(game, { pile: "foundation", suit }, [top]);
+ 					if (next) onState(next);
+ 				}}
+ 			/>
 			) : (
 				<div className={`foundationPlaceholder ${suit === "H" || suit === "D" ? "red" : "black"}`}>
 					{suitSymbol(suit)}
@@ -322,11 +315,12 @@ function FoundationPile(props: {
 
 export function SolitaireBoard(props: {
 	seed: string;
+	cardDesign: CardDesign;
 	onStateChange?: (state: GameState) => void;
 	onRequestHome?: () => void;
 	onRequestNewGame?: () => void;
 }) {
-	const { seed, onStateChange, onRequestHome, onRequestNewGame } = props;
+	const { seed, cardDesign, onStateChange, onRequestHome, onRequestNewGame } = props;
 	const gameRef = useRef<KlondikeGame | null>(null);
 	const stateRef = useRef<GameState | null>(null);
 
@@ -427,7 +421,7 @@ export function SolitaireBoard(props: {
 								onStateChange?.(s);
 							}}
 						>
-							<img className="cardBackImg" src={CARD_BACK_URL} alt="Stock" />
+ 						<img className="cardBackImg" src={cardBackDataUri(cardDesign)} alt="Stock" />
 						</div>
 					</div>
 
@@ -445,10 +439,11 @@ export function SolitaireBoard(props: {
 										className="wasteFanItem"
 										style={{ transform: `translateX(${x}px) rotate(${angle}deg)` }}
 									>
-										<CardView
-											card={c}
-											draggable={!isFinished && isTop}
-											dragItem={
+   							<CardView
+   								card={c}
+   								draggable={!isFinished && isTop}
+   								cardDesign={cardDesign}
+   								dragItem={
 												isTop
 													? { type: "CARD_STACK", from: { pile: "waste" }, cards: [c] }
 													: undefined
@@ -472,12 +467,13 @@ export function SolitaireBoard(props: {
 
 				<div className="foundations">
 					{(["H", "D", "C", "S"] as Suit[]).map((suit) => (
-						<FoundationPile
-							key={suit}
-							suit={suit}
-							pile={state.foundations[suit]}
-							game={game}
-							disabled={isFinished}
+ 					<FoundationPile
+ 						key={suit}
+ 						suit={suit}
+ 						pile={state.foundations[suit]}
+ 						game={game}
+ 						disabled={isFinished}
+ 						cardDesign={cardDesign}
 							onState={(next) => {
 								setState(next);
 								onStateChange?.(next);
@@ -496,6 +492,7 @@ export function SolitaireBoard(props: {
 						state={state}
 						game={game}
 						disabled={isFinished}
+						cardDesign={cardDesign}
 						onState={(next) => {
 							setState(next);
 							onStateChange?.(next);

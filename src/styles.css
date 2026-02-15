@@ -216,3 +216,78 @@ button:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
+
+/* Card Designer */
+
+.designer {
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.designerTitle {
+	font-size: 24px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.designerSection {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.designerLabel {
+	font-size: 14px;
+	font-weight: 600;
+	opacity: 0.8;
+}
+
+.colorPalette {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.colorSwatch {
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	border: 2px solid rgba(15, 23, 42, 0.2);
+	cursor: pointer;
+	transition: transform 120ms ease, box-shadow 120ms ease;
+	padding: 0;
+}
+
+.colorSwatch:hover {
+	transform: scale(1.1);
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+}
+
+.colorSwatch.selected {
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+}
+
+.designerPreview {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.previewCard {
+	width: 84px;
+	height: 114px;
+	border-radius: 6px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+}
+
+.designerActions {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+}
