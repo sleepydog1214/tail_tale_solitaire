@@ -43,6 +43,7 @@ export interface MoveRecord {
 export interface GameScoreState {
 	baseScore: number;
 	timeBonus: number;
+	efficiencyBonus: number;
 	totalScore: number;
 }
 
@@ -55,6 +56,7 @@ export interface GameState {
 	timeRemainingSeconds: number;
 	score: GameScoreState;
 	moveCount: number;
+	columnClears: number;
 
 	stock: Card[];
 	waste: Card[];
@@ -116,7 +118,9 @@ export class KlondikeGame {
 	private finishedAtMs: number | null = null;
 	private baseScore = 0;
 	private timeBonus = 0;
+	private efficiencyBonus = 0;
 	private moveCount = 0;
+	private columnClears = 0;
 	private lastMove: MoveRecord | null = null;
 
 	private stock: Card[] = [];
@@ -138,7 +142,9 @@ export class KlondikeGame {
 		this.finishedAtMs = null;
 		this.baseScore = 0;
 		this.timeBonus = 0;
+		this.efficiencyBonus = 0;
 		this.moveCount = 0;
+		this.columnClears = 0;
 		this.lastMove = null;
 
 		const deck = this.createShuffledDeck();
@@ -261,6 +267,13 @@ export class KlondikeGame {
 					this.baseScore += 20;
 				}
 			}
+
+			// Column clear bonus: tableau column became empty after the move
+			if (pile.length === 0) {
+				pointsDelta += 50;
+				this.baseScore += 50;
+				this.columnClears += 1;
+			}
 		}
 
 		this.recordMove(from, to, movingCards.map((c) => c.id), uncoveredCardId, pointsDelta, createdAtMs);
@@ -316,7 +329,8 @@ export class KlondikeGame {
 		const timeElapsedSeconds = this.getTimeElapsedSeconds();
 		const timeRemainingSeconds = this.getTimeRemainingSeconds();
 		const timeBonus = this.finishedAtMs === null ? 0 : this.timeBonus;
-		const totalScore = this.baseScore + timeBonus;
+		const efficiencyBonus = this.finishedAtMs === null ? 0 : this.efficiencyBonus;
+		const totalScore = this.baseScore + timeBonus + efficiencyBonus;
 
 		const state: GameState = {
 			seed: this.seed,
@@ -328,9 +342,11 @@ export class KlondikeGame {
 			score: {
 				baseScore: this.baseScore,
 				timeBonus,
+				efficiencyBonus,
 				totalScore,
 			},
 			moveCount: this.moveCount,
+			columnClears: this.columnClears,
 			stock: this.stock.map((c) => ({ ...c })),
 			waste: this.waste.map((c) => ({ ...c })),
 			foundations: {
@@ -369,11 +385,14 @@ export class KlondikeGame {
 		if (this.finishedAtMs !== null) return;
 		this.finishedAtMs = this.now();
 
-		// Time Bonus = Base Score × (Time Remaining / 300)
+		// Time Bonus = Base Score × (Time Remaining / matchDuration)
 		const timeRemaining = this.getTimeRemainingSeconds();
 		this.timeBonus = Math.floor(
 			this.baseScore * (timeRemaining / this.matchDurationSeconds)
 		);
+
+		// Move Efficiency Bonus: reward fewer moves (max 200 moves threshold)
+		this.efficiencyBonus = Math.max(0, 200 - this.moveCount) * 5;
 	}
 
 	private recordMove(

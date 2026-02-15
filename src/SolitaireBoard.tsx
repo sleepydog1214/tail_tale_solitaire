@@ -327,17 +327,24 @@ function FoundationPile(props: {
 export function SolitaireBoard(props: {
 	seed: string;
 	cardDesign: CardDesign;
+	matchDurationSeconds?: number;
+	turnCount?: 1 | 3;
 	onStateChange?: (state: GameState) => void;
 	onRequestHome?: () => void;
 	onRequestNewGame?: () => void;
+	onGameFinished?: (state: GameState) => void;
 }) {
-	const { seed, cardDesign, onStateChange, onRequestHome, onRequestNewGame } = props;
+	const { seed, cardDesign, matchDurationSeconds, turnCount, onStateChange, onRequestHome, onRequestNewGame, onGameFinished } = props;
+	const gameFinishedRef = useRef(false);
 	const gameRef = useRef<KlondikeGame | null>(null);
 	const stateRef = useRef<GameState | null>(null);
 
 	const game = useMemo(() => {
-		return new KlondikeGame(seed);
-	}, [seed]);
+		return new KlondikeGame(seed, {
+			matchDurationSeconds: matchDurationSeconds ?? 300,
+			turnCount: turnCount ?? 3,
+		});
+	}, [seed, matchDurationSeconds, turnCount]);
 
 	const [state, setState] = useState<GameState | null>(null);
 	const [tick, setTick] = useState(0);
@@ -348,6 +355,7 @@ export function SolitaireBoard(props: {
 
 	useEffect(() => {
 		gameRef.current = game;
+		gameFinishedRef.current = false;
 		const s = game.deal();
 		setState(s);
 		onStateChange?.(s);
@@ -378,12 +386,18 @@ export function SolitaireBoard(props: {
 
 	useEffect(() => {
 		if (!state) return;
-		if (state.finishedAtMs !== null) return;
+		if (state.finishedAtMs !== null) {
+			if (!gameFinishedRef.current) {
+				gameFinishedRef.current = true;
+				onGameFinished?.(state);
+			}
+			return;
+		}
 		if (state.timeRemainingSeconds > 0) return;
 		const s = game.finish();
 		setState(s);
 		onStateChange?.(s);
-	}, [game, onStateChange, state]);
+	}, [game, onStateChange, onGameFinished, state]);
 
 	if (!state) return null;
 
