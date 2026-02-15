@@ -58,9 +58,6 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 			padding: "30px",
 			maxWidth: "700px",
 			margin: "0 auto",
-			fontFamily: "sans-serif",
-			backgroundColor: "#0a0a0a",
-			minHeight: "100vh"
 		}}>
 			<div style={{
 				display: "flex",
@@ -68,14 +65,14 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 				alignItems: "center",
 				marginBottom: "30px",
 				padding: "20px",
-				backgroundColor: "#1a1a1a",
+				backgroundColor: "rgba(255,255,255,0.85)",
 				borderRadius: "12px",
-				border: "2px solid #333"
+				border: "1.5px solid rgba(200,100,160,0.25)"
 			}}>
-				<h2 style={{ margin: 0, fontSize: "2em", color: "#fff" }}>🎰 Wager Challenge</h2>
+				<h2 style={{ margin: 0, fontSize: "2em", fontWeight: 900, background: "linear-gradient(135deg, #e060a0, #a060d8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>🐾 Wager Challenge</h2>
 				<div style={{ textAlign: "right" }}>
-					<div style={{ fontSize: "1.5em", fontWeight: "bold", color: "#fbbf24" }}>🪙 {wallet.coins} coins</div>
-					<div style={{ fontSize: "1em", color: "#9ca3af", marginTop: "4px" }}>
+					<div style={{ fontSize: "1.5em", fontWeight: "bold", color: "#d060a0" }}>🪙 {wallet.coins} coins</div>
+					<div style={{ fontSize: "1em", color: "#a06090", marginTop: "4px" }}>
 						{rankDef.label} • Streak: {progression.winStreak}
 					</div>
 				</div>
@@ -88,7 +85,7 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 					display: "block",
 					marginBottom: "12px",
 					fontSize: "1.2em",
-					color: "#e5e7eb"
+					color: "#6b2060"
 				}}>Contract Mode</label>
 				<div style={{ display: "flex", gap: "12px" }}>
 					{ALL_CONTRACTS.map((c, i) => (
@@ -97,19 +94,19 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 							onClick={() => { setSelectedContractIdx(i); setSelectedStake(null); }}
 							style={{
 								padding: "16px 20px",
-								border: i === selectedContractIdx ? "3px solid #3b82f6" : "2px solid #444",
+								border: i === selectedContractIdx ? "2.5px solid #e060b0" : "1.5px solid rgba(200,100,160,0.3)",
 								borderRadius: "12px",
-								background: i === selectedContractIdx ? "#1e3a5f" : "#1f1f1f",
-								color: "#fff",
+								background: i === selectedContractIdx ? "rgba(230,100,176,0.1)" : "rgba(255,255,255,0.85)",
+								color: "#5a2050",
 								cursor: "pointer",
 								flex: 1,
-								transition: "all 0.2s"
+								transition: "all 0.15s ease"
 							}}
 						>
 							<div style={{ fontWeight: "bold", fontSize: "1.1em", marginBottom: "6px" }}>
 								{c.mode === "classicClear" ? "⏱ Classic Clear" : "🎯 Score Target"}
 							</div>
-							<div style={{ fontSize: "0.9em", color: "#9ca3af" }}>
+							<div style={{ fontSize: "0.9em", color: "#a06090" }}>
 								{c.mode === "classicClear" ? "Complete the game fast" : "Hit PI threshold"}
 							</div>
 						</button>
@@ -124,12 +121,12 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 					display: "block",
 					marginBottom: "12px",
 					fontSize: "1.2em",
-					color: "#e5e7eb"
+					color: "#6b2060"
 				}}>Game Configuration</label>
 
 				{/* Timer Selection */}
 				<div style={{ marginBottom: "16px" }}>
-					<div style={{ fontSize: "0.95em", color: "#9ca3af", marginBottom: "8px" }}>⏱ Timer</div>
+					<div style={{ fontSize: "0.95em", color: "#a06090", marginBottom: "8px" }}>⏱ Timer</div>
 					<div style={{ display: "flex", gap: "8px" }}>
 						{TIMER_OPTIONS.map(option => (
 							<button
@@ -137,14 +134,14 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 								onClick={() => setTimerSeconds(option.value)}
 								style={{
 									padding: "8px 16px",
-									border: timerSeconds === option.value ? "2px solid #3b82f6" : "2px solid #444",
+									border: timerSeconds === option.value ? "2px solid #e060b0" : "1.5px solid rgba(200,100,160,0.3)",
 									borderRadius: "8px",
-									background: timerSeconds === option.value ? "#1e3a5f" : "#1f1f1f",
-									color: "#fff",
+									background: timerSeconds === option.value ? "rgba(230,100,176,0.1)" : "rgba(255,255,255,0.85)",
+									color: "#5a2050",
 									cursor: "pointer",
 									fontSize: "0.95em",
 									fontWeight: timerSeconds === option.value ? "bold" : "normal",
-									transition: "all 0.2s"
+									transition: "all 0.15s ease"
 								}}
 							>
 								{option.label}
@@ -155,20 +152,20 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 
 				{/* Draw Mode Selection */}
 				<div style={{ marginBottom: "16px" }}>
-					<div style={{ fontSize: "0.95em", color: "#9ca3af", marginBottom: "8px" }}>🃏 Draw Mode</div>
+					<div style={{ fontSize: "0.95em", color: "#a06090", marginBottom: "8px" }}>🃏 Draw Mode</div>
 					<div style={{ display: "flex", gap: "8px" }}>
 						<button
 							onClick={() => setDrawMode(1)}
 							style={{
 								padding: "8px 16px",
-								border: drawMode === 1 ? "2px solid #3b82f6" : "2px solid #444",
+								border: drawMode === 1 ? "2px solid #e060b0" : "1.5px solid rgba(200,100,160,0.3)",
 								borderRadius: "8px",
-								background: drawMode === 1 ? "#1e3a5f" : "#1f1f1f",
-								color: "#fff",
+								background: drawMode === 1 ? "rgba(230,100,176,0.1)" : "rgba(255,255,255,0.85)",
+								color: "#5a2050",
 								cursor: "pointer",
 								fontSize: "0.95em",
 								fontWeight: drawMode === 1 ? "bold" : "normal",
-								transition: "all 0.2s"
+								transition: "all 0.15s ease"
 							}}
 						>
 							Draw 1
@@ -177,14 +174,14 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 							onClick={() => setDrawMode(3)}
 							style={{
 								padding: "8px 16px",
-								border: drawMode === 3 ? "2px solid #3b82f6" : "2px solid #444",
+								border: drawMode === 3 ? "2px solid #e060b0" : "1.5px solid rgba(200,100,160,0.3)",
 								borderRadius: "8px",
-								background: drawMode === 3 ? "#1e3a5f" : "#1f1f1f",
-								color: "#fff",
+								background: drawMode === 3 ? "rgba(230,100,176,0.1)" : "rgba(255,255,255,0.85)",
+								color: "#5a2050",
 								cursor: "pointer",
 								fontSize: "0.95em",
 								fontWeight: drawMode === 3 ? "bold" : "normal",
-								transition: "all 0.2s"
+								transition: "all 0.15s ease"
 							}}
 						>
 							Draw 3
@@ -199,7 +196,7 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 						alignItems: "center",
 						cursor: "pointer",
 						fontSize: "0.95em",
-						color: "#e5e7eb"
+						color: "#5a2050"
 					}}>
 						<input
 							type="checkbox"
@@ -223,7 +220,7 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 						alignItems: "center",
 						cursor: "pointer",
 						fontSize: "0.95em",
-						color: "#e5e7eb"
+						color: "#5a2050"
 					}}>
 						<input
 							type="checkbox"
@@ -236,7 +233,7 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 								cursor: "pointer"
 							}}
 						/>
-						<span>💡 Allow Hints {hintAllowed && <span style={{ color: "#9ca3af" }}>(−400 PI each)</span>}</span>
+						<span>💡 Allow Hints {hintAllowed && <span style={{ color: "#a06090" }}>(−400 PI each)</span>}</span>
 					</label>
 				</div>
 			</div>
@@ -248,7 +245,7 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 					display: "block",
 					marginBottom: "12px",
 					fontSize: "1.2em",
-					color: "#e5e7eb"
+					color: "#6b2060"
 				}}>Stake</label>
 				<div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
 					{contract.stakeTiers.map((tier) => {
@@ -264,20 +261,20 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 								disabled={disabled}
 								style={{
 									padding: "12px 20px",
-									border: selected ? "3px solid #fbbf24" : "2px solid #444",
-									borderRadius: "10px",
-									background: selected ? "#78350f" : disabled ? "#0f0f0f" : "#1f1f1f",
-									color: disabled ? "#4b5563" : "#fff",
-									cursor: disabled ? "not-allowed" : "pointer",
-									opacity: disabled ? 0.5 : 1,
-									minWidth: "80px",
-									fontSize: "1.1em",
-									fontWeight: "bold",
-									transition: "all 0.2s"
+								border: selected ? "2.5px solid #e060b0" : "1.5px solid rgba(200,100,160,0.3)",
+								borderRadius: "10px",
+								background: selected ? "rgba(230,100,176,0.12)" : disabled ? "rgba(200,180,190,0.1)" : "rgba(255,255,255,0.85)",
+								color: disabled ? "#b0a0a8" : "#5a2050",
+								cursor: disabled ? "not-allowed" : "pointer",
+								opacity: disabled ? 0.5 : 1,
+								minWidth: "80px",
+								fontSize: "1.1em",
+								fontWeight: "bold",
+								transition: "all 0.15s ease"
 								}}
 							>
 								{tier}
-								{!unlocked && <div style={{ fontSize: "0.8em", color: "#6b7280", marginTop: "2px" }}>🔒</div>}
+								{!unlocked && <div style={{ fontSize: "0.8em", color: "#c080a0", marginTop: "2px" }}>🔒</div>}
 							</button>
 						);
 					})}
@@ -289,15 +286,15 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 				<div style={{
 					marginBottom: "24px",
 					padding: "20px",
-					background: "#1a1a1a",
+					background: "rgba(255,255,255,0.85)",
 					borderRadius: "12px",
-					border: "2px solid #333"
+					border: "1.5px solid rgba(200,100,160,0.25)"
 				}}>
 					<div style={{
 						fontWeight: "bold",
 						marginBottom: "16px",
 						fontSize: "1.2em",
-						color: "#e5e7eb"
+						color: "#6b2060"
 					}}>Payout Table (stake {selectedStake})</div>
 					<div style={{
 						display: "grid",
@@ -306,9 +303,9 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 						fontSize: "1.05em",
 						alignItems: "center"
 					}}>
-						<div style={{ fontWeight: "bold", color: "#9ca3af" }}>Outcome</div>
-						<div style={{ fontWeight: "bold", color: "#9ca3af", textAlign: "center" }}>Multiplier</div>
-						<div style={{ fontWeight: "bold", color: "#9ca3af", textAlign: "right" }}>Net Gain</div>
+						<div style={{ fontWeight: "bold", color: "#a06090" }}>Outcome</div>
+						<div style={{ fontWeight: "bold", color: "#a06090", textAlign: "center" }}>Multiplier</div>
+						<div style={{ fontWeight: "bold", color: "#a06090", textAlign: "right" }}>Net Gain</div>
 						{(["fail", "partial", "pass", "great", "exceptional"] as const).map((label) => {
 							const mult = contract.payouts[label];
 							const payout = Math.floor(selectedStake * mult);
@@ -320,7 +317,7 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 										textTransform: "capitalize",
 										fontWeight: "600"
 									}}>{label}</div>
-									<div style={{ textAlign: "center", color: "#e5e7eb" }}>{mult}×</div>
+									<div style={{ textAlign: "center", color: "#5a2050" }}>{mult}×</div>
 									<div style={{
 										color: net >= 0 ? "#22c55e" : "#dc2626",
 										fontWeight: "bold",
@@ -345,29 +342,29 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 						padding: "18px",
 						fontSize: "1.2em",
 						fontWeight: "bold",
-						background: selectedStake ? "#16a34a" : "#1f1f1f",
-						color: selectedStake ? "#fff" : "#6b7280",
-						border: selectedStake ? "2px solid #22c55e" : "2px solid #444",
+						background: selectedStake ? "linear-gradient(135deg, #ff9ec8 0%, #c890e0 100%)" : "rgba(200,180,190,0.15)",
+						color: selectedStake ? "#fff" : "#b0a0a8",
+						border: selectedStake ? "2px solid #e070b0" : "1.5px solid rgba(200,100,160,0.3)",
 						borderRadius: "12px",
 						cursor: selectedStake ? "pointer" : "not-allowed",
-						transition: "all 0.2s"
+						transition: "all 0.15s ease"
 					}}
 				>
-					{selectedStake ? `🎮 Play for ${selectedStake} coins` : "Select a stake"}
+					{selectedStake ? `🐾 Play for ${selectedStake} coins` : "Select a stake"}
 				</button>
 				<button
 					onClick={onPractice}
 					style={{
 						flex: 1,
 						padding: "18px",
-						background: "#1f1f1f",
-						color: "#d1d5db",
-						border: "2px solid #444",
+						background: "rgba(255,255,255,0.85)",
+						color: "#6b2060",
+						border: "1.5px solid rgba(200,100,160,0.3)",
 						borderRadius: "12px",
 						cursor: "pointer",
 						fontSize: "1.1em",
 						fontWeight: "600",
-						transition: "all 0.2s"
+						transition: "all 0.15s ease"
 					}}
 				>
 					Practice
@@ -376,14 +373,14 @@ export function WagerScreen({ wallet, progression, onStartWager, onPractice, onH
 					onClick={onHome}
 					style={{
 						padding: "18px 24px",
-						background: "#1f1f1f",
-						color: "#d1d5db",
-						border: "2px solid #444",
+						background: "rgba(255,255,255,0.85)",
+						color: "#6b2060",
+						border: "1.5px solid rgba(200,100,160,0.3)",
 						borderRadius: "12px",
 						cursor: "pointer",
 						fontSize: "1.1em",
 						fontWeight: "600",
-						transition: "all 0.2s"
+						transition: "all 0.15s ease"
 					}}
 				>
 					Home

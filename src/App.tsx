@@ -183,7 +183,7 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 	if (route.screen === "game") {
 		return (
 			<DndProvider backend={dndBackend}>
-				<GameWindow title="Tale Tail Solitaire — Practice">
+				<GameWindow title="Tail Tale Solitaire — Practice">
 					<SolitaireBoard
 						key={route.session.seed}
 						seed={route.session.seed}
@@ -213,7 +213,7 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 
 	return (
 		<DndProvider backend={dndBackend}>
-			<GameWindow title="Welcome to Tale Tail Solitaire">
+			<GameWindow title="Tail Tale Solitaire">
 				<HomePage onNewGame={startNewGame} onCustomizeCards={openDesigner} onWagerChallenge={openWager} />
 			</GameWindow>
 		</DndProvider>

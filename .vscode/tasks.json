@@ -19,7 +19,7 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": "^\\s*(VITE|vite)\\s+v",
-          "endsPattern": "Local:\\s+http://localhost:5173/"
+          "endsPattern": "Local:\\s+http://localhost:\\d+/"
         }
       },
       "group": "build"
@@ -29,6 +29,7 @@
       "type": "shell",
       "command": "npm",
       "args": ["run", "build"],
+      "group": "build",
       "problemMatcher": []
     },
     {
@@ -44,6 +45,25 @@
       "command": "npm",
       "args": ["run", "typecheck"],
       "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "npm: test",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: test:watch",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:watch"],
+      "isBackground": true,
+      "problemMatcher": []
     },
     {
       "label": "functions: install",

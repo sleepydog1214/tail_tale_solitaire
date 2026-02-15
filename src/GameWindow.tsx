@@ -22,6 +22,7 @@ export function GameWindow({ children, title }: GameWindowProps) {
 	return (
 		<div className="appWindow">
 			<div className="appWindowTitleBar">
+				<span className="appWindowTitleIcon">🐱</span>
 				<span className="appWindowTitle">{title}</span>
 			</div>
 			<div className="appWindowContent">

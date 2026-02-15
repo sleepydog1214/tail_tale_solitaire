@@ -2,24 +2,79 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Vite App (Chrome)",
-      "type": "pwa-chrome",
+      "name": "Debug Web App (Chrome)",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:5173",
       "webRoot": "${workspaceFolder}/src",
       "preLaunchTask": "npm: dev",
-      "runtimeArgs": ["--remote-debugging-port=9222"],
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
     },
     {
-      "name": "Launch Vite Dev Server Only",
+      "name": "Debug Vitest (Current File)",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vitest",
+        "run",
+        "--testTimeout=10000",
+        "--hookTimeout=10000",
+        "--teardownTimeout=10000",
+        "${relativeFile}"
+      ],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Debug Vitest (All Tests)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vitest",
+        "run",
+        "--bail=1",
+        "--testTimeout=10000",
+        "--hookTimeout=10000",
+        "--teardownTimeout=10000"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Debug Electron App",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "args": ["."],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "VITE_DEV_SERVER_URL": "http://localhost:5173"
+      },
+      "preLaunchTask": "npm: dev",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Electron App (Production Build)",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "npm: build",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "args": ["."],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack: Vite + Chrome",
+      "configurations": ["Debug Web App (Chrome)"]
     }
   ]
 }

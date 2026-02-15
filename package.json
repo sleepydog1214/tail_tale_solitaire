@@ -45,7 +45,7 @@
   },
   "build": {
     "appId": "com.taletailsolitaire.app",
-    "productName": "Tale Tail Solitaire",
+    "productName": "Tail Tale Solitaire",
     "directories": {
       "output": "release"
     },

@@ -45,7 +45,7 @@ export function CardDesigner(props: CardDesignerProps) {
 
 	return (
 		<div className="designer">
-			<h2 className="designerTitle">Tale Tail Cards</h2>
+			<h2 className="designerTitle">Tail Tale Cards</h2>
 
 			<div className="designerSection">
 				<h3 className="designerLabel">Card Background</h3>

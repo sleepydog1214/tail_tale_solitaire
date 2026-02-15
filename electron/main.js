@@ -8,7 +8,7 @@ function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 1200,
 		height: 900,
-		title: "Welcome to Tale Tail Solitaire",
+		title: "Tail Tale Solitaire",
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
 			contextIsolation: true,

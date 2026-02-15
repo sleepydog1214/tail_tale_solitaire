@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,10 +12,11 @@ html, body {
 }
 
 body {
-	font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+	font-family: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 	padding: 0;
 	margin: 0;
-	background: #e2e8f0;
+	background: linear-gradient(135deg, #ffd6e7 0%, #ead5f5 50%, #d5e5f7 100%);
+	background-attachment: fixed;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
@@ -23,10 +26,10 @@ body {
 
 .appWindow {
 	background: #ffffff;
-	border: 1px solid rgba(15, 23, 42, 0.18);
-	border-radius: 10px;
-	box-shadow: 0 8px 32px rgba(15, 23, 42, 0.18), 0 2px 8px rgba(15, 23, 42, 0.08);
-	overflow: visible;
+	border: 1.5px solid #f0a8cc;
+	border-radius: 16px;
+	box-shadow: 0 8px 32px rgba(200, 80, 150, 0.18), 0 2px 8px rgba(180, 60, 130, 0.10);
+	overflow: hidden;
 	margin: 24px auto;
 	min-width: 360px;
 	max-width: 1140px;
@@ -34,34 +37,61 @@ body {
 }
 
 .appWindowTitleBar {
-	background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
-	border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+	background: linear-gradient(135deg, #ff9ec8 0%, #d4a0e8 100%);
+	border-bottom: 1px solid #e070b0;
 	padding: 10px 16px;
 	user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
 .appWindowTitle {
 	font-size: 14px;
-	font-weight: 600;
-	color: #334155;
+	font-weight: 800;
+	color: #ffffff;
+	text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+	letter-spacing: 0.02em;
 }
 
 .appWindowContent {
 	padding: 16px;
-	background: rgba(15, 23, 42, 0.02);
+	background: #fffbfd;
 }
 
 .home {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	max-width: 520px;
+	gap: 14px;
+	max-width: 420px;
+	align-items: flex-start;
+}
+
+.homeCatHeader {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 4px;
 }
 
 .homeTitle {
 	margin: 0;
-	font-size: 28px;
-	font-weight: 800;
+	font-size: 32px;
+	font-weight: 900;
+	background: linear-gradient(135deg, #e060a0, #a060d8);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	letter-spacing: -0.01em;
+}
+
+.homeSubtitle {
+	margin: 0;
+	font-size: 14px;
+	color: #c060a0;
+	font-weight: 600;
+	font-style: italic;
 }
 
 .board {
@@ -100,33 +130,35 @@ body {
 .pile {
 	min-height: 120px;
 	padding: 6px;
-	border: 1px solid rgba(15, 23, 42, 0.25);
-	border-radius: 10px;
+	border: 1px solid rgba(200, 100, 160, 0.25);
+	border-radius: 12px;
 	position: relative;
-	background: rgba(255, 255, 255, 0.55);
+	background: rgba(255, 220, 240, 0.22);
 }
 
 .pile.validDrop {
-	outline: 2px solid currentColor;
+	outline: 2px solid #e860b0;
 	outline-offset: 2px;
+	background: rgba(255, 200, 230, 0.35);
 }
 
 .pile.invalidDrop {
-	outline: 2px dashed currentColor;
+	outline: 2px dashed #c06090;
 	outline-offset: 2px;
 	opacity: 0.75;
 }
 
 .pileTitle {
 	font-size: 12px;
-	opacity: 0.75;
+	font-weight: 700;
+	color: rgba(180, 80, 130, 0.7);
 	margin-bottom: 6px;
 }
 
 .card {
 	width: 84px;
 	height: 114px;
-	border: 1px solid rgba(15, 23, 42, 0.28);
+	border: 1px solid rgba(200, 100, 160, 0.3);
 	border-radius: 12px;
 	background: #ffffff;
 	display: flex;
@@ -134,13 +166,13 @@ body {
 	justify-content: center;
 	font-size: 18px;
 	position: relative;
-	box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+	box-shadow: 0 3px 12px rgba(180, 60, 120, 0.12);
 	transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .card:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+	box-shadow: 0 8px 24px rgba(180, 60, 120, 0.18);
 }
 
 .card:active {
@@ -167,11 +199,12 @@ body {
 
 .cardCorner {
 	font-size: 14px;
-	font-weight: 700;
+	font-weight: 800;
 	line-height: 1;
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+	font-family: 'Nunito', serif;
 }
 
 .cardCorner.bottomRight {
@@ -181,17 +214,17 @@ body {
 
 .cardCenter {
 	font-size: 34px;
-	font-weight: 700;
-	opacity: 0.2;
+	font-weight: 900;
+	opacity: 0.15;
 	align-self: center;
 }
 
 .card.red {
-	color: #b00020;
+	color: #c0002a;
 }
 
 .card.black {
-	color: #111;
+	color: #1a1030;
 }
 
 .card.draggable {
@@ -225,39 +258,59 @@ body {
 }
 
 .stackTopCard > .card {
-	box-shadow: 0 0 0 2.5px #3b82f6, 0 4px 14px rgba(15, 23, 42, 0.12);
-	border-color: #3b82f6;
+	box-shadow: 0 0 0 2.5px #e860b0, 0 4px 14px rgba(220, 80, 160, 0.2);
+	border-color: #e860b0;
 }
 
 .foundationPlaceholder {
 	width: 84px;
 	height: 114px;
 	border-radius: 12px;
-	border: 2px dashed rgba(15, 23, 42, 0.25);
+	border: 2px dashed rgba(200, 100, 160, 0.4);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 32px;
-	opacity: 0.5;
+	font-size: 28px;
+	color: rgba(200, 100, 160, 0.55);
 }
 
 .controls {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
+	flex-wrap: wrap;
 }
 
 button {
-	padding: 8px 10px;
-	border: 1px solid currentColor;
-	border-radius: 6px;
-	background: transparent;
+	padding: 8px 16px;
+	border: none;
+	border-radius: 9999px;
+	background: linear-gradient(135deg, #ff9ec8 0%, #c890e0 100%);
+	color: #ffffff;
+	font-family: 'Nunito', system-ui, sans-serif;
+	font-size: 14px;
+	font-weight: 700;
 	cursor: pointer;
+	transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+	box-shadow: 0 2px 8px rgba(180, 60, 130, 0.18);
+	letter-spacing: 0.01em;
+}
+
+button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 14px rgba(180, 60, 130, 0.3);
+	background: linear-gradient(135deg, #ff80b8 0%, #b870d0 100%);
+}
+
+button:active {
+	transform: translateY(0px);
 }
 
 button:disabled {
-	opacity: 0.5;
+	opacity: 0.45;
 	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
 }
 
 /* Card Designer */
@@ -273,8 +326,12 @@ button:disabled {
 
 .designerTitle {
 	font-size: 24px;
-	font-weight: 700;
+	font-weight: 800;
 	text-align: center;
+	background: linear-gradient(135deg, #e060a0, #a060d8);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
 .designerSection {
@@ -285,8 +342,8 @@ button:disabled {
 
 .designerLabel {
 	font-size: 14px;
-	font-weight: 600;
-	opacity: 0.8;
+	font-weight: 700;
+	color: #b050a0;
 }
 
 .colorPalette {
@@ -298,21 +355,23 @@ button:disabled {
 .colorSwatch {
 	width: 40px;
 	height: 40px;
-	border-radius: 8px;
-	border: 2px solid rgba(15, 23, 42, 0.2);
+	border-radius: 10px;
+	border: 2.5px solid rgba(180, 80, 150, 0.2);
 	cursor: pointer;
 	transition: transform 120ms ease, box-shadow 120ms ease;
 	padding: 0;
+	box-shadow: 0 1px 4px rgba(180, 80, 150, 0.12);
+	background: transparent;
 }
 
 .colorSwatch:hover {
-	transform: scale(1.1);
-	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+	transform: scale(1.12);
+	box-shadow: 0 3px 10px rgba(180, 80, 150, 0.25);
 }
 
 .colorSwatch.selected {
-	border-color: #3b82f6;
-	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+	border-color: #e060b0;
+	box-shadow: 0 0 0 3px rgba(220, 80, 160, 0.3);
 }
 
 .designerPreview {
@@ -325,12 +384,51 @@ button:disabled {
 .previewCard {
 	width: 84px;
 	height: 114px;
-	border-radius: 6px;
-	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+	border-radius: 10px;
+	box-shadow: 0 3px 12px rgba(180, 60, 120, 0.15);
 }
 
 .designerActions {
 	display: flex;
 	gap: 12px;
 	justify-content: center;
+}
+
+/* ── Kitten Theme Decorations ── */
+
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Cellipse cx='25' cy='32' rx='10' ry='8' fill='%23d070a0'/%3E%3Cellipse cx='15' cy='18' rx='5' ry='6.5' fill='%23d070a0' transform='rotate(-10 15 18)'/%3E%3Cellipse cx='25' cy='14' rx='5' ry='6.5' fill='%23d070a0'/%3E%3Cellipse cx='35' cy='18' rx='5' ry='6.5' fill='%23d070a0' transform='rotate(10 35 18)'/%3E%3C/svg%3E");
+	background-size: 120px;
+	opacity: 0.035;
+}
+
+#root {
+	position: relative;
+	z-index: 1;
+}
+
+.kittenMascot {
+	display: block;
+	filter: drop-shadow(0 4px 12px rgba(200, 80, 150, 0.2));
+}
+
+.appWindowTitleIcon {
+	font-size: 16px;
+	line-height: 1;
+}
+
+.homePawDivider {
+	color: #e0a0c0;
+	font-size: 12px;
+	letter-spacing: 6px;
+	user-select: none;
+}
+
+.quitButton {
+	background: linear-gradient(135deg, #ffa0a0 0%, #e0a0c0 100%) !important;
 }
