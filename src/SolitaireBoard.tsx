@@ -196,15 +196,26 @@ function TableauPile(props: {
 		.filter(Boolean)
 		.join(" ");
 
+	// Find the top of the longest valid run (first face-up card that starts a valid run to the end).
+	const stackTopPos = useMemo(() => {
+		for (let p = 0; p < pile.length; p++) {
+			if (!pile[p].faceUp) continue;
+			const slice = pile.slice(p);
+			if (isValidTableauRun(slice) && slice.length > 1) return p;
+		}
+		return -1;
+	}, [pile]);
+
 	return (
 		<div ref={dropRef} className={pileClass}>
 			<div className="pileTitle">T{index + 1}</div>
-			<div className="cardStack">
-				{pile.map((card, pos) => {
+ 		<div className="cardStack" style={{ minHeight: pile.length > 0 ? (pile.length - 1) * 24 + 114 + 8 : 132 }}>
+ 			{pile.map((card, pos) => {
 					const isFaceUp = card.faceUp;
 					const slice = isFaceUp ? pile.slice(pos) : [];
 					const draggable =
 						!disabled && isFaceUp && slice.length > 0 && isValidTableauRun(slice);
+					const isStackTop = pos === stackTopPos;
 
 					const from: PileRef = { pile: "tableau", index, position: pos };
 					const dragItem: DragItem | undefined = draggable
@@ -214,7 +225,7 @@ function TableauPile(props: {
 					return (
 						<div
 							key={card.id}
-							className="cardInTableau"
+							className={`cardInTableau${isStackTop ? " stackTopCard" : ""}`}
 							style={{ top: pos * 24 }}
 						>
  						<CardView

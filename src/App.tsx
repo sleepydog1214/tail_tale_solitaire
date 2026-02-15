@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import type { BackendFactory } from "dnd-core";
 import { HomePage } from "./HomePage";
 import { SolitaireBoard } from "./SolitaireBoard";
 import { CardDesigner } from "./CardDesigner";
+import { GameWindow } from "./GameWindow";
 import { createGameSession, type GameSessionConfig } from "./game/session";
 import { loadCardDesign, saveCardDesign } from "./cardGen";
 import type { CardDesign } from "./cardGen";
@@ -39,35 +40,41 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 		setRoute({ screen: "home" });
 	}, []);
 
-	const content = useMemo(() => {
-		if (route.screen === "designer") {
-			return (
-				<CardDesigner
-					currentDesign={cardDesign}
-					onApply={applyDesign}
-					onCancel={goHome}
-				/>
-			);
-		}
-
-		if (route.screen === "home") {
-			return <HomePage onNewGame={startNewGame} onCustomizeCards={openDesigner} />;
-		}
-
+	if (route.screen === "game") {
 		return (
-			<SolitaireBoard
-				key={route.session.seed}
-				seed={route.session.seed}
-				cardDesign={cardDesign}
-				onRequestHome={goHome}
-				onRequestNewGame={startNewGame}
-			/>
+			<DndProvider backend={dndBackend}>
+				<GameWindow title="Tale Tail Solitaire">
+					<SolitaireBoard
+						key={route.session.seed}
+						seed={route.session.seed}
+						cardDesign={cardDesign}
+						onRequestHome={goHome}
+						onRequestNewGame={startNewGame}
+					/>
+				</GameWindow>
+			</DndProvider>
 		);
-	}, [route, goHome, startNewGame, openDesigner, applyDesign, cardDesign]);
+	}
+
+	if (route.screen === "designer") {
+		return (
+			<DndProvider backend={dndBackend}>
+				<GameWindow title="Card Designer">
+					<CardDesigner
+						currentDesign={cardDesign}
+						onApply={applyDesign}
+						onCancel={goHome}
+					/>
+				</GameWindow>
+			</DndProvider>
+		);
+	}
 
 	return (
 		<DndProvider backend={dndBackend}>
-			{content}
+			<GameWindow title="Welcome to Tale Tail Solitaire">
+				<HomePage onNewGame={startNewGame} onCustomizeCards={openDesigner} />
+			</GameWindow>
 		</DndProvider>
 	);
 }
