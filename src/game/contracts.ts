@@ -50,15 +50,19 @@ export interface Contract {
 // Starter contracts — rescaled thresholds from implementation-plan.md Part 2
 // ---------------------------------------------------------------------------
 
+export const DEFAULT_CONTRACT_RULES: ContractRules = {
+	undoAllowed: true,
+	hintAllowed: true,
+	drawMode: 3,
+};
+
+export const DEFAULT_TIMER_SECONDS = 300; // 5:00
+
 export const CLASSIC_CLEAR_5MIN: Contract = {
 	id: "classic-clear-5",
 	mode: "classicClear",
-	timerSeconds: 300,
-	rules: {
-		undoAllowed: false,
-		hintAllowed: true,
-		drawMode: 3,
-	},
+	timerSeconds: DEFAULT_TIMER_SECONDS,
+	rules: { ...DEFAULT_CONTRACT_RULES },
 	stakeTiers: [10, 25, 50, 100, 250, 500, 1000],
 	thresholds: {
 		10:   { partial: 3000, pass: 6000, great: 8000,  exceptional: 10000 },
@@ -81,12 +85,8 @@ export const CLASSIC_CLEAR_5MIN: Contract = {
 export const SCORE_TARGET_5MIN: Contract = {
 	id: "score-target-5",
 	mode: "scoreTarget",
-	timerSeconds: 300,
-	rules: {
-		undoAllowed: false,
-		hintAllowed: true,
-		drawMode: 3,
-	},
+	timerSeconds: DEFAULT_TIMER_SECONDS,
+	rules: { ...DEFAULT_CONTRACT_RULES },
 	stakeTiers: [10, 25, 50, 100, 250, 500, 1000],
 	thresholds: {
 		10:   { partial: 3000, pass: 5500, great: 7500,  exceptional: 9500 },

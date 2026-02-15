@@ -116,6 +116,8 @@ export class KlondikeGame {
 
 	private startedAtMs = 0;
 	private finishedAtMs: number | null = null;
+	private pausedAtMs: number | null = null;
+	private totalPausedMs = 0;
 	private baseScore = 0;
 	private timeBonus = 0;
 	private efficiencyBonus = 0;
@@ -127,6 +129,8 @@ export class KlondikeGame {
 	private waste: Card[] = [];
 	private foundations: Record<Suit, Card[]> = { H: [], D: [], C: [], S: [] };
 	private tableau: Card[][] = [[], [], [], [], [], [], []];
+
+	private stateHistory: GameState[] = [];
 
 	constructor(seed: string, options: KlondikeGameOptions = {}) {
 		this.seed = seed;
@@ -140,12 +144,15 @@ export class KlondikeGame {
 	deal(): GameState {
 		this.startedAtMs = this.now();
 		this.finishedAtMs = null;
+		this.pausedAtMs = null;
+		this.totalPausedMs = 0;
 		this.baseScore = 0;
 		this.timeBonus = 0;
 		this.efficiencyBonus = 0;
 		this.moveCount = 0;
 		this.columnClears = 0;
 		this.lastMove = null;
+		this.stateHistory = [];
 
 		const deck = this.createShuffledDeck();
 
@@ -175,9 +182,52 @@ export class KlondikeGame {
 		return this.getState();
 	}
 
+	pause(): GameState {
+		this.assertDealt();
+		if (this.finishedAtMs !== null) return this.getState();
+		if (this.pausedAtMs === null) {
+			this.pausedAtMs = this.now();
+		}
+		return this.getState();
+	}
+
+	resume(): GameState {
+		this.assertDealt();
+		if (this.finishedAtMs !== null) return this.getState();
+		if (this.pausedAtMs !== null) {
+			const pauseDuration = this.now() - this.pausedAtMs;
+			this.totalPausedMs += pauseDuration;
+			this.pausedAtMs = null;
+		}
+		return this.getState();
+	}
+
+	isPaused(): boolean {
+		return this.pausedAtMs !== null;
+	}
+
+	canUndo(): boolean {
+		return this.stateHistory.length > 0 && this.finishedAtMs === null;
+	}
+
+	undo(): GameState {
+		this.assertDealt();
+		if (this.finishedAtMs !== null) return this.getState();
+		if (this.pausedAtMs !== null) return this.getState();
+		if (this.stateHistory.length === 0) return this.getState();
+
+		const previousState = this.stateHistory.pop()!;
+		this.restoreFromState(previousState);
+		return this.getState();
+	}
+
 	drawFromStock(): GameState {
 		this.assertDealt();
 		if (this.finishedAtMs !== null) return this.getState();
+		if (this.pausedAtMs !== null) return this.getState();
+
+		// Save state before move
+		this.saveStateToHistory();
 
 		const createdAtMs = this.now();
 		let pointsDelta = 0;
@@ -233,6 +283,10 @@ export class KlondikeGame {
 	moveCard(from: PileRef, to: PileRef): GameState {
 		this.assertDealt();
 		if (this.finishedAtMs !== null) return this.getState();
+		if (this.pausedAtMs !== null) return this.getState();
+
+		// Save state before move
+		this.saveStateToHistory();
 
 		const createdAtMs = this.now();
 		let pointsDelta = 0;
@@ -324,6 +378,46 @@ export class KlondikeGame {
 		);
 	}
 
+	isAutoWinnable(): boolean {
+		// Auto-winnable if all face-down cards are revealed and no cards in stock
+		if (this.stock.length > 0) return false;
+		for (const pile of this.tableau) {
+			for (const card of pile) {
+				if (!card.faceUp) return false;
+			}
+		}
+		return true;
+	}
+
+	autoCompleteToWin(): GameState {
+		this.assertDealt();
+		if (this.finishedAtMs !== null) return this.getState();
+
+		// Auto-move all cards to foundations until solved
+		let iterations = 0;
+		const maxIterations = 500; // Safety limit
+
+		while (!this.isSolved() && iterations < maxIterations) {
+			const moves = this.canAutoMoveToFoundation();
+			if (moves.length === 0) break;
+
+			// Move the first available card
+			const move = moves[0];
+			try {
+				this.moveCard(move.from, move.to);
+			} catch {
+				break; // Stop if move fails
+			}
+			iterations++;
+		}
+
+		if (this.isSolved()) {
+			this.finishGame();
+		}
+
+		return this.getState();
+	}
+
 	getState(): GameState {
 		this.assertDealt();
 		const timeElapsedSeconds = this.getTimeElapsedSeconds();
@@ -372,8 +466,9 @@ export class KlondikeGame {
 
 	private getTimeElapsedSeconds(): number {
 		if (this.startedAtMs === 0) return 0;
-		const endMs = this.finishedAtMs ?? this.now();
-		return clampInt((endMs - this.startedAtMs) / 1000, 0, Number.MAX_SAFE_INTEGER);
+		const endMs = this.finishedAtMs ?? (this.pausedAtMs ?? this.now());
+		const elapsedMs = endMs - this.startedAtMs - this.totalPausedMs;
+		return clampInt(elapsedMs / 1000, 0, Number.MAX_SAFE_INTEGER);
 	}
 
 	private getTimeRemainingSeconds(): number {
@@ -412,6 +507,32 @@ export class KlondikeGame {
 			pointsDelta,
 			createdAtMs,
 		};
+	}
+
+	private saveStateToHistory(): void {
+		const currentState = this.getState();
+		this.stateHistory.push(currentState);
+		// Limit history to 50 moves to avoid memory issues
+		if (this.stateHistory.length > 50) {
+			this.stateHistory.shift();
+		}
+	}
+
+	private restoreFromState(state: GameState): void {
+		this.baseScore = state.score.baseScore;
+		this.moveCount = state.moveCount;
+		this.columnClears = state.columnClears;
+		this.lastMove = state.lastMove;
+
+		this.stock = state.stock.map(c => ({ ...c }));
+		this.waste = state.waste.map(c => ({ ...c }));
+		this.foundations = {
+			H: state.foundations.H.map(c => ({ ...c })),
+			D: state.foundations.D.map(c => ({ ...c })),
+			C: state.foundations.C.map(c => ({ ...c })),
+			S: state.foundations.S.map(c => ({ ...c })),
+		};
+		this.tableau = state.tableau.map(pile => pile.map(c => ({ ...c })));
 	}
 
 	private createShuffledDeck(): Card[] {

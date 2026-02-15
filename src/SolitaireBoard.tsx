@@ -209,7 +209,7 @@ function TableauPile(props: {
 	return (
 		<div ref={dropRef} className={pileClass}>
 			<div className="pileTitle">T{index + 1}</div>
- 		<div className="cardStack" style={{ minHeight: pile.length > 0 ? (pile.length - 1) * 24 + 114 + 8 : 132 }}>
+ 		<div className="cardStack" style={{ minHeight: pile.length > 0 ? (pile.length - 1) * 32 + 114 + 8 : 132 }}>
  			{pile.map((card, pos) => {
 					const isFaceUp = card.faceUp;
 					const slice = isFaceUp ? pile.slice(pos) : [];
@@ -226,7 +226,7 @@ function TableauPile(props: {
 						<div
 							key={card.id}
 							className={`cardInTableau${isStackTop ? " stackTopCard" : ""}`}
-							style={{ top: pos * 24 }}
+							style={{ top: pos * 32 }}
 						>
  						<CardView
  							card={card}
@@ -329,12 +329,13 @@ export function SolitaireBoard(props: {
 	cardDesign: CardDesign;
 	matchDurationSeconds?: number;
 	turnCount?: 1 | 3;
+	undoAllowed?: boolean;
 	onStateChange?: (state: GameState) => void;
 	onRequestHome?: () => void;
 	onRequestNewGame?: () => void;
 	onGameFinished?: (state: GameState) => void;
 }) {
-	const { seed, cardDesign, matchDurationSeconds, turnCount, onStateChange, onRequestHome, onRequestNewGame, onGameFinished } = props;
+	const { seed, cardDesign, matchDurationSeconds, turnCount, undoAllowed = true, onStateChange, onRequestHome, onRequestNewGame, onGameFinished } = props;
 	const gameFinishedRef = useRef(false);
 	const gameRef = useRef<KlondikeGame | null>(null);
 	const stateRef = useRef<GameState | null>(null);
@@ -348,6 +349,7 @@ export function SolitaireBoard(props: {
 
 	const [state, setState] = useState<GameState | null>(null);
 	const [tick, setTick] = useState(0);
+	const [isPaused, setIsPaused] = useState(false);
 
 	useEffect(() => {
 		stateRef.current = state;
@@ -373,6 +375,7 @@ export function SolitaireBoard(props: {
 		if (!current) return;
 		// Refresh timer in state.
 		if (current.finishedAtMs !== null) return;
+		if (isPaused) return; // Don't update timer when paused
 		try {
 			const s = game.getState();
 			setState(s);
@@ -382,7 +385,7 @@ export function SolitaireBoard(props: {
 		}
 		// Only re-run on tick; state changes are expected.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tick, game, onStateChange]);
+	}, [tick, game, onStateChange, isPaused]);
 
 	useEffect(() => {
 		if (!state) return;
@@ -393,7 +396,15 @@ export function SolitaireBoard(props: {
 			}
 			return;
 		}
-		if (state.timeRemainingSeconds > 0) return;
+		if (state.timeRemainingSeconds > 0) {
+			// Check if game is auto-winnable and trigger auto-completion
+			if (game.isAutoWinnable()) {
+				const s = game.autoCompleteToWin();
+				setState(s);
+				onStateChange?.(s);
+			}
+			return;
+		}
 		const s = game.finish();
 		setState(s);
 		onStateChange?.(s);
@@ -402,6 +413,8 @@ export function SolitaireBoard(props: {
 	if (!state) return null;
 
 	const isFinished = state.finishedAtMs !== null || state.timeRemainingSeconds <= 0;
+	const canAutoComplete = !isFinished && !isPaused && game.isAutoWinnable();
+	const isDisabled = isFinished || isPaused;
 
 	const wasteTop3 = getTop3Waste(state.waste);
 	const wasteTop = state.waste.length ? state.waste[state.waste.length - 1] : null;
@@ -410,16 +423,63 @@ export function SolitaireBoard(props: {
 		<div className="board">
 			<div className="controls">
 				<div>Time: {formatTime(state.timeRemainingSeconds)}</div>
+				<div>Moves: {state.moveCount}</div>
+				<div>Score: {state.score.totalScore}</div>
 				{!isFinished ? (
-					<button
-						onClick={() => {
-							const s = game.finish();
-							setState(s);
-							onStateChange?.(s);
-						}}
-					>
-						Finish
-					</button>
+					<>
+						<button
+							onClick={() => {
+								if (isPaused) {
+									const s = game.resume();
+									setState(s);
+									onStateChange?.(s);
+									setIsPaused(false);
+								} else {
+									const s = game.pause();
+									setState(s);
+									onStateChange?.(s);
+									setIsPaused(true);
+								}
+							}}
+							style={{ background: isPaused ? '#22c55e' : '#f59e0b' }}
+						>
+							{isPaused ? '▶ Resume' : '⏸ Pause'}
+						</button>
+						{undoAllowed && (
+							<button
+								onClick={() => {
+									const s = game.undo();
+									setState(s);
+									onStateChange?.(s);
+								}}
+								disabled={!game.canUndo() || isPaused}
+								style={{ background: game.canUndo() && !isPaused ? '#3b82f6' : undefined }}
+							>
+								↶ Undo
+							</button>
+						)}
+						{canAutoComplete && (
+							<button
+								onClick={() => {
+									const s = game.autoCompleteToWin();
+									setState(s);
+									onStateChange?.(s);
+								}}
+								style={{ background: '#22c55e' }}
+							>
+								Auto-Complete
+							</button>
+						)}
+						<button
+							onClick={() => {
+								const s = game.finish();
+								setState(s);
+								onStateChange?.(s);
+							}}
+						>
+							Finish
+						</button>
+					</>
 				) : (
 					<>
 						<button onClick={onRequestHome} disabled={!onRequestHome}>
@@ -438,9 +498,9 @@ export function SolitaireBoard(props: {
 						<div className="pileTitle">Stock ({state.stock.length})</div>
 						<div
 							className="card"
-							style={{ cursor: isFinished ? "default" : "pointer" }}
+							style={{ cursor: isDisabled ? "default" : "pointer" }}
 							onClick={() => {
-								if (isFinished) return;
+								if (isDisabled) return;
 								const s = game.drawFromStock();
 								setState(s);
 								onStateChange?.(s);
@@ -466,7 +526,7 @@ export function SolitaireBoard(props: {
 									>
    							<CardView
    								card={c}
-   								draggable={!isFinished && isTop}
+   								draggable={!isDisabled && isTop}
    								cardDesign={cardDesign}
    								dragItem={
 												isTop
@@ -474,7 +534,7 @@ export function SolitaireBoard(props: {
 													: undefined
 											}
 											onClick={() => {
-												if (isFinished) return;
+												if (isDisabled) return;
 												if (!isTop) return;
 												const next = tryAutoMove(game, { pile: "waste" }, [c]);
 												if (next) {
@@ -497,7 +557,7 @@ export function SolitaireBoard(props: {
  						suit={suit}
  						pile={state.foundations[suit]}
  						game={game}
- 						disabled={isFinished}
+ 						disabled={isDisabled}
  						cardDesign={cardDesign}
 							onState={(next) => {
 								setState(next);
@@ -516,7 +576,7 @@ export function SolitaireBoard(props: {
 						pile={pile}
 						state={state}
 						game={game}
-						disabled={isFinished}
+						disabled={isDisabled}
 						cardDesign={cardDesign}
 						onState={(next) => {
 							setState(next);

@@ -136,6 +136,7 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 						cardDesign={cardDesign}
 						matchDurationSeconds={selection.contract.timerSeconds}
 						turnCount={selection.contract.rules.drawMode}
+						undoAllowed={selection.contract.rules.undoAllowed}
 						onGameFinished={(state) => handleWagerGameFinished(state, selection)}
 						onRequestHome={goHome}
 					/>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 
 // Keep a global reference to prevent garbage collection.
@@ -33,6 +33,11 @@ function createWindow() {
 		mainWindow = null;
 	});
 }
+
+// Handle quit-app IPC message
+ipcMain.on("quit-app", () => {
+	app.quit();
+});
 
 app.whenReady().then(createWindow);
 
