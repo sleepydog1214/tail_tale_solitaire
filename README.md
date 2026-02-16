@@ -135,3 +135,27 @@ Then press **F5** to build and launch Electron with the debugger attached.
 - Home screen: "Tail Tale Solitaire" + "New Game"
 - In game: "Finish" ends the run
 - After finish: controls swap to "Home" + "New Game"
+
+## Building as Windows 11 Packaged App (MSIX)
+
+The app is now configured as a Progressive Web App (PWA) and can be packaged as a native-feeling MSIX app for Windows 11 using [PWABuilder](https://www.pwabuilder.com/) (Microsoft's official tool).
+
+### Steps to generate MSIX:
+
+1. `npm run build` — produces `dist/`.
+
+2. Serve `dist/` locally:
+   ```
+   npx serve -s dist
+   ```
+   (install serve: `npm i -g serve`)
+
+   Or use `npm run preview`.
+
+3. Open [PWABuilder.com](https://www.pwabuilder.com/), paste your app URL (e.g. `http://localhost:4173`).
+
+4. Review & fix any warnings (e.g. generate better icons using PWABuilder tools).
+
+5. Click "Build My PWA for Windows" → Generate & download `.msixbundle`.
+
+6. Double-click the MSIX to install (enable Developer Mode / sideloading in Windows Settings > Privacy & security > For developers).
