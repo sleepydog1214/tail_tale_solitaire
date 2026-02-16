@@ -25,3 +25,10 @@ builder-debug.yml
 !.env.example
 .functions-cache/
 scratch/
+
+# Android signing/local SDK files
+*.jks
+*.keystore
+android/local.properties
+/android/app/.gitignore
+/android/.gitignore

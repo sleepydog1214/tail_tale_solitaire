@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
 import type { BackendFactory } from "dnd-core";
 import { HomePage } from "./HomePage";
 import { SolitaireBoard } from "./SolitaireBoard";
@@ -44,8 +45,23 @@ function getTodayDate(): string {
 	return new Date().toISOString().slice(0, 10);
 }
 
+// Simple check for touch support
+const isTouchDevice = () => {
+	return (('ontouchstart' in window) ||
+		(navigator.maxTouchPoints > 0));
+};
+
 export function App(props: { dndBackend?: BackendFactory } = {}) {
-	const dndBackend = props.dndBackend ?? HTML5Backend;
+	// Use TouchBackend on mobile/touch devices, HTML5Backend otherwise
+	const dndBackend = useMemo(() => {
+		if (props.dndBackend) return props.dndBackend;
+		return isTouchDevice() ? TouchBackend : HTML5Backend;
+	}, [props.dndBackend]);
+
+	// Options for TouchBackend to allow scrolling while dragging if needed
+	const dndOptions = useMemo(() => {
+		return dndBackend === TouchBackend ? { enableMouseEvents: true } : {};
+	}, [dndBackend]);
 
 	const [route, setRoute] = useState<AppRoute>({ screen: "home" });
 	const [cardDesign, setCardDesign] = useState<CardDesign>(loadCardDesign);
@@ -124,11 +140,11 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 		}
 	}, [wallet, updateWallet]);
 
-	// Wager game screen
-	if (route.screen === "wagerGame") {
-		const { session, selection } = route;
-		return (
-			<DndProvider backend={dndBackend}>
+	// Shared layout wrapper to avoid repeating DndProvider
+	const renderContent = () => {
+		if (route.screen === "wagerGame") {
+			const { session, selection } = route;
+			return (
 				<GameWindow title={`Wager: ${selection.contract.mode === "classicClear" ? "Classic Clear" : "Score Target"} — ${selection.stake} coins`}>
 					<SolitaireBoard
 						key={session.seed}
@@ -141,14 +157,11 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 						onRequestHome={goHome}
 					/>
 				</GameWindow>
-			</DndProvider>
-		);
-	}
+			);
+		}
 
-	// Results screen
-	if (route.screen === "results") {
-		return (
-			<DndProvider backend={dndBackend}>
+		if (route.screen === "results") {
+			return (
 				<GameWindow title="Wager Results">
 					<ResultsScreen
 						result={route.result}
@@ -158,14 +171,11 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 						onHome={goHome}
 					/>
 				</GameWindow>
-			</DndProvider>
-		);
-	}
+			);
+		}
 
-	// Wager selection screen
-	if (route.screen === "wager") {
-		return (
-			<DndProvider backend={dndBackend}>
+		if (route.screen === "wager") {
+			return (
 				<GameWindow title="Wager Challenge">
 					<WagerScreen
 						wallet={wallet}
@@ -175,14 +185,11 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 						onHome={goHome}
 					/>
 				</GameWindow>
-			</DndProvider>
-		);
-	}
+			);
+		}
 
-	// Practice game screen
-	if (route.screen === "game") {
-		return (
-			<DndProvider backend={dndBackend}>
+		if (route.screen === "game") {
+			return (
 				<GameWindow title="Tail Tale Solitaire — Practice">
 					<SolitaireBoard
 						key={route.session.seed}
@@ -193,13 +200,11 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 						onRequestNewGame={startNewGame}
 					/>
 				</GameWindow>
-			</DndProvider>
-		);
-	}
+			);
+		}
 
-	if (route.screen === "designer") {
-		return (
-			<DndProvider backend={dndBackend}>
+		if (route.screen === "designer") {
+			return (
 				<GameWindow title="Card Designer">
 					<CardDesigner
 						currentDesign={cardDesign}
@@ -207,15 +212,19 @@ export function App(props: { dndBackend?: BackendFactory } = {}) {
 						onCancel={goHome}
 					/>
 				</GameWindow>
-			</DndProvider>
-		);
-	}
+			);
+		}
 
-	return (
-		<DndProvider backend={dndBackend}>
+		return (
 			<GameWindow title="Tail Tale Solitaire">
 				<HomePage onNewGame={startNewGame} onCustomizeCards={openDesigner} onWagerChallenge={openWager} />
 			</GameWindow>
+		);
+	};
+
+	return (
+		<DndProvider backend={dndBackend} options={dndOptions}>
+			{renderContent()}
 		</DndProvider>
 	);
 }

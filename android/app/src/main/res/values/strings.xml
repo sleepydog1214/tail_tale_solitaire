@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tail Tale Solitaire</string>
+    <string name="title_activity_main">Tail Tale Solitaire</string>
+    <string name="package_name">com.tailtale.solitaire</string>
+    <string name="custom_url_scheme">com.tailtale.solitaire</string>
+</resources>

@@ -1,0 +1,6 @@
+{
+  "appId": "com.tailtale.solitaire",
+  "appName": "Tail Tale Solitaire",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

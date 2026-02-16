@@ -53,6 +53,9 @@ This uses the workspace configs in `.vscode/launch.json` and `.vscode/tasks.json
 - `npm run electron:dev` - Build and launch in Electron (quick test)
 - `npm run electron:start` - Launch Electron using an existing `dist/` build
 - `npm run electron:build` - Build and package as a Windows .exe installer
+- `npm run android:sync` - Build web assets and sync them into the Android project
+- `npm run android:open` - Open the native Android project in Android Studio
+- `npm run android:build` - Build a debug Android APK via Gradle
 
 ## Electron desktop app
 
@@ -129,6 +132,16 @@ Add the following to `.vscode/launch.json`:
 ```
 
 Then press **F5** to build and launch Electron with the debugger attached.
+
+## Android build (Capacitor)
+
+Android support is now wired through Capacitor with native project files in `android/`.
+
+### Build steps
+
+1. `npm run android:sync` to build `dist/` and copy web assets into Android.
+2. `npm run android:build` to produce a debug APK (`android/app/build/outputs/apk/debug/`).
+3. Optionally run `npm run android:open` to open the project in Android Studio.
 
 ## App flow
 
