@@ -1,6 +1,25 @@
 node_modules/
 dist/
 release/
+out/
+coverage/
+*.log
+
+# Packaged app artifacts (Electron Forge / electron-builder style outputs)
+*.exe
+*.msi
+*.nupkg
+*.deb
+*.rpm
+*.dmg
+*.AppImage
+*.snap
+*.zip
+*.7z
+*.blockmap
+latest*.yml
+builder-debug.yml
+
 .env
 .env.*
 !.env.example
