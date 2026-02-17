@@ -143,6 +143,16 @@ Android support is now wired through Capacitor with native project files in `and
 2. `npm run android:build` to produce a debug APK (`android/app/build/outputs/apk/debug/`).
 3. Optionally run `npm run android:open` to open the project in Android Studio.
 
+### Deploy to phone
+
+Run `android-deploy.bat` (or use the **Android: Deploy to Phone** run configuration in IntelliJ/WebStorm).
+It syncs, builds, and installs the APK via `adb`.
+
+The script auto-detects `adb` from `ANDROID_HOME` or `android/local.properties`.
+If `adb` is not found, ensure the Android SDK is installed (e.g. via Android Studio) and
+either set the `ANDROID_HOME` environment variable or verify `android/local.properties`
+contains a valid `sdk.dir` path.
+
 ## App flow
 
 - Home screen: "Tail Tale Solitaire" + "New Game"

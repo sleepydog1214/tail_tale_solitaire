@@ -349,6 +349,37 @@ button:disabled {
 	transform: none;
 }
 
+/* Color swatches in card designer should use inline background-color */
+button.colorSwatch {
+	background-image: none !important;
+	background-color: inherit;
+	padding: 0;
+	border-radius: 0.75rem;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+	min-width: 3.5rem;
+	min-height: 3.5rem;
+}
+
+/* Designer action buttons: override global button styles to respect Tailwind classes */
+.designer button:not(.colorSwatch) {
+	border-radius: 0.75rem;
+	box-shadow: 0 4px 12px rgba(180, 60, 130, 0.18);
+}
+
+.designer button.designerApply {
+	background: linear-gradient(to right, #ec4899, #a855f7) !important;
+	color: #fff;
+	font-weight: 700;
+	padding: 10px 24px;
+	font-size: 15px;
+	box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
+}
+
+.designer button.designerApply:hover {
+	box-shadow: 0 6px 20px rgba(168, 85, 247, 0.45);
+	transform: translateY(-2px);
+}
+
 /* Kitten Theme Decorations - Hide on small screens to save space */
 @media (max-width: 600px) {
 	body::after { display: none; }
@@ -369,4 +400,36 @@ body::after {
 	position: relative;
 	z-index: 1;
 	width: 100%;
+}
+
+/* Mobile / portrait layout improvements: larger top-row elements for readability */
+
+@media (max-width: 767px) {
+  .topRow {
+    gap: 6px;
+  }
+  .topRow .foundations {
+    display: flex;
+    gap: 6px;
+  }
+  .topRow .leftTop {
+    display: flex;
+    gap: 6px;
+  }
+  .topRow .pile {
+    min-height: 110px;
+    min-width: 72px;
+    padding: 5px;
+  }
+  .topRow .card {
+    min-width: 64px;
+    min-height: 88px;
+  }
+  .topRow .pileTitle {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+  .tableau {
+    gap: 6px;
+  }
 }

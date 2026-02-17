@@ -493,23 +493,24 @@ export function SolitaireBoard(props: {
 			</div>
 
 			<div className="topRow">
-				<div className="leftTop">
-					<div className="pile">
-						<div className="pileTitle">Stock ({state.stock.length})</div>
-						<div
-							className="card"
-							style={{ cursor: isDisabled ? "default" : "pointer" }}
-							onClick={() => {
-								if (isDisabled) return;
-								const s = game.drawFromStock();
-								setState(s);
-								onStateChange?.(s);
+				<div className="foundations">
+					{(["H", "D", "C", "S"] as Suit[]).map((suit) => (
+						<FoundationPile
+							key={suit}
+							suit={suit}
+							pile={state.foundations[suit]}
+							game={game}
+							disabled={isDisabled}
+							cardDesign={cardDesign}
+							onState={(next) => {
+								setState(next);
+								onStateChange?.(next);
 							}}
-						>
- 						<img className="cardBackImg" src={cardBackDataUri(cardDesign)} alt="Stock" />
-						</div>
-					</div>
+						/>
+					))}
+				</div>
 
+				<div className="leftTop">
 					<div className="pile">
 						<div className="pileTitle">Waste ({state.waste.length})</div>
 						<div className="wasteFan">
@@ -524,11 +525,11 @@ export function SolitaireBoard(props: {
 										className="wasteFanItem"
 										style={{ transform: `translateX(${x}px) rotate(${angle}deg)` }}
 									>
-   							<CardView
-   								card={c}
-   								draggable={!isDisabled && isTop}
-   								cardDesign={cardDesign}
-   								dragItem={
+										<CardView
+											card={c}
+											draggable={!isDisabled && isTop}
+											cardDesign={cardDesign}
+											dragItem={
 												isTop
 													? { type: "CARD_STACK", from: { pile: "waste" }, cards: [c] }
 													: undefined
@@ -548,23 +549,22 @@ export function SolitaireBoard(props: {
 							})}
 						</div>
 					</div>
-				</div>
 
-				<div className="foundations">
-					{(["H", "D", "C", "S"] as Suit[]).map((suit) => (
- 					<FoundationPile
- 						key={suit}
- 						suit={suit}
- 						pile={state.foundations[suit]}
- 						game={game}
- 						disabled={isDisabled}
- 						cardDesign={cardDesign}
-							onState={(next) => {
-								setState(next);
-								onStateChange?.(next);
+					<div className="pile">
+						<div className="pileTitle">Stock ({state.stock.length})</div>
+						<div
+							className="card"
+							style={{ cursor: isDisabled ? "default" : "pointer" }}
+							onClick={() => {
+								if (isDisabled) return;
+								const s = game.drawFromStock();
+								setState(s);
+								onStateChange?.(s);
 							}}
-						/>
-					))}
+						>
+							<img className="cardBackImg" src={cardBackDataUri(cardDesign)} alt="Stock" />
+						</div>
+					</div>
 				</div>
 			</div>
 

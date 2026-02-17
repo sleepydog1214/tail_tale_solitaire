@@ -14,7 +14,7 @@ describe("CardDesigner", () => {
 				onCancel={vi.fn()}
 			/>
 		);
-		expect(screen.getByText("Tale Tail Cards")).toBeInTheDocument();
+		expect(screen.getByText("Card Designer")).toBeInTheDocument();
 	});
 
 	it("renders all palette color swatches", () => {
@@ -128,5 +128,22 @@ describe("CardDesigner", () => {
 
 		await user.click(screen.getByRole("button", { name: /apply/i }));
 		expect(onApply).toHaveBeenCalledWith(DEFAULT_CARD_DESIGN);
+	});
+
+	it("renders color swatches with distinct background colors", () => {
+		render(
+			<CardDesigner
+				currentDesign={DEFAULT_CARD_DESIGN}
+				onApply={vi.fn()}
+				onCancel={vi.fn()}
+			/>
+		);
+		const swatches = screen.getAllByRole("radio");
+		const bgColors = swatches.map((swatch: Element) => {
+			const style = window.getComputedStyle(swatch as Element).backgroundColor;
+			return style;
+		});
+		const uniqueColors = new Set(bgColors);
+		expect(uniqueColors.size).toBe(COLOR_PALETTE.length);
 	});
 });

@@ -9,16 +9,16 @@ export const DEFAULT_CARD_DESIGN: CardDesign = {
 };
 
 export const COLOR_PALETTE: string[] = [
-	"#ffffff",
-	"#f8f0e3",
-	"#e8f5e9",
-	"#e3f2fd",
-	"#fce4ec",
-	"#fff3e0",
-	"#f3e5f5",
-	"#e0f7fa",
-	"#fffde7",
-	"#efebe9",
+	"#ffffff",  // White
+	"#fce4ec",  // Soft Pink
+	"#e3f2fd",  // Light Blue
+	"#e8f5e9",  // Mint Green
+	"#fff3e0",  // Peach
+	"#f3e5f5",  // Lavender
+	"#ffe0b2",  // Light Orange
+	"#ffecb3",  // Pale Yellow
+	"#b2dfdb",  // Teal
+	"#d1c4e9",  // Purple
 ];
 
 export type { Suit, Rank };
