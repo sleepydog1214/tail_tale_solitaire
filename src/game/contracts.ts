@@ -51,7 +51,7 @@ export interface Contract {
 // ---------------------------------------------------------------------------
 
 export const DEFAULT_CONTRACT_RULES: ContractRules = {
-	undoAllowed: true,
+	undoAllowed: false,
 	hintAllowed: true,
 	drawMode: 3,
 };

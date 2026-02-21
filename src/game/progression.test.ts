@@ -13,6 +13,8 @@ import {
 	STREAK_BONUS_MULTIPLIER,
 } from "./progression";
 
+import type { PlayerProgression } from "./progression";
+
 describe("Progression — Ranks", () => {
 	it("starts at mouse rank", () => {
 		const p = createProgression();
@@ -143,7 +145,7 @@ describe("Progression — Rank Trials", () => {
 	});
 
 	it("hitPI trial: does not count if PI below threshold", () => {
-		let p = { ...createProgression(), rank: "fox" as const };
+		let p: PlayerProgression = { ...createProgression(), rank: "fox" };
 		p = recordRunForTrial(p, {
 			mode: "classicClear",
 			completed: true,
@@ -167,7 +169,7 @@ describe("Progression — Rank Trials", () => {
 	});
 
 	it("dragon trial requires both hitPI and consecutiveWins", () => {
-		let p = { ...createProgression(), rank: "wolf" as const };
+		let p: PlayerProgression = { ...createProgression(), rank: "wolf" };
 
 		// 3 runs hitting PI 10000+ and profitable (building streak)
 		for (let i = 0; i < 3; i++) {
@@ -183,7 +185,7 @@ describe("Progression — Rank Trials", () => {
 	});
 
 	it("dragon trial: consecutive wins reset on loss", () => {
-		let p = { ...createProgression(), rank: "wolf" as const };
+		let p: PlayerProgression = { ...createProgression(), rank: "wolf" };
 
 		// 2 profitable runs
 		for (let i = 0; i < 2; i++) {
@@ -209,7 +211,7 @@ describe("Progression — Rank Trials", () => {
 	});
 
 	it("no promotion at max rank (dragon)", () => {
-		let p = { ...createProgression(), rank: "dragon" as const };
+		let p: PlayerProgression = { ...createProgression(), rank: "dragon" };
 		p = recordRunForTrial(p, {
 			mode: "classicClear",
 			completed: true,

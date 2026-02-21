@@ -222,22 +222,44 @@ export function getStreakBonus(winStreak: number): number {
 
 const PROGRESSION_STORAGE_KEY = "taletail_progression";
 
-export function saveProgression(prog: PlayerProgression): void {
+const progKeyForPlayer = (playerId: string) => `taletail_progression:${playerId}`;
+
+export function saveProgressionForPlayer(playerId: string, prog: PlayerProgression): void {
 	if (typeof localStorage !== "undefined") {
-		localStorage.setItem(PROGRESSION_STORAGE_KEY, JSON.stringify(prog));
+		localStorage.setItem(progKeyForPlayer(playerId), JSON.stringify(prog));
 	}
 }
 
-export function loadProgression(): PlayerProgression {
-	if (typeof localStorage !== "undefined") {
-		const raw = localStorage.getItem(PROGRESSION_STORAGE_KEY);
-		if (raw) {
-			try {
-				return JSON.parse(raw) as PlayerProgression;
-			} catch {
-				// corrupted
-			}
+export function loadProgressionForPlayer(playerId: string): PlayerProgression {
+	if (typeof localStorage === "undefined") {
+		return createProgression();
+	}
+
+	const playerKey = progKeyForPlayer(playerId);
+	const rawPlayer = localStorage.getItem(playerKey);
+
+	if (rawPlayer) {
+		try {
+			return JSON.parse(rawPlayer) as PlayerProgression;
+		} catch {
+			// JSON parse error — return fresh progression
+			return createProgression();
 		}
 	}
+
+	// Migration: if player-specific key is missing, check the old global key.
+	const rawGlobal = localStorage.getItem(PROGRESSION_STORAGE_KEY);
+	if (rawGlobal) {
+		try {
+			const globalProg = JSON.parse(rawGlobal) as PlayerProgression;
+			// Migrate immediately to player-scoped storage.
+			saveProgressionForPlayer(playerId, globalProg);
+			return globalProg;
+		} catch {
+			// Corrupted — return fresh progression.
+		}
+	}
+
 	return createProgression();
 }
+

@@ -12,21 +12,21 @@ function parseCount(labelText: string): number {
 }
 
 describe("Tail Tale Solitaire navigation", () => {
-	it("shows Home with New Game", () => {
+	it("shows Home with Practice Game button", () => {
 		render(<App dndBackend={TestBackend} />);
 		expect(
 			screen.getByRole("heading", { name: /tail tale solitaire/i })
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole("button", { name: /new game/i })
+			screen.getByRole("button", { name: /practice game/i })
 		).toBeInTheDocument();
 	});
 
-	it("New Game starts the game", async () => {
+	it("Practice Game starts the game", async () => {
 		const user = userEvent.setup();
 		render(<App dndBackend={TestBackend} />);
 
-		await user.click(screen.getByRole("button", { name: /new game/i }));
+		await user.click(screen.getByRole("button", { name: /practice game/i }));
 		expect(screen.getByRole("button", { name: /finish/i })).toBeInTheDocument();
 	});
 
@@ -34,7 +34,7 @@ describe("Tail Tale Solitaire navigation", () => {
 		const user = userEvent.setup();
 		render(<App dndBackend={TestBackend} />);
 
-		await user.click(screen.getByRole("button", { name: /new game/i }));
+		await user.click(screen.getByRole("button", { name: /practice game/i }));
 
 		const wasteBefore = parseCount(screen.getByText(/waste \(\d+\)/i).textContent ?? "");
 		await user.click(screen.getByAltText(/stock/i));
@@ -57,7 +57,7 @@ describe("Tail Tale Solitaire navigation", () => {
 		const user = userEvent.setup();
 		render(<App dndBackend={TestBackend} />);
 
-		await user.click(screen.getByRole("button", { name: /new game/i }));
+		await user.click(screen.getByRole("button", { name: /practice game/i }));
 		await user.click(screen.getByRole("button", { name: /finish/i }));
 		await user.click(screen.getByRole("button", { name: /^home$/i }));
 
@@ -70,7 +70,7 @@ describe("Tail Tale Solitaire navigation", () => {
 		const user = userEvent.setup();
 		render(<App dndBackend={TestBackend} />);
 
-		await user.click(screen.getByRole("button", { name: /new game/i }));
+		await user.click(screen.getByRole("button", { name: /practice game/i }));
 		await user.click(screen.getByRole("button", { name: /finish/i }));
 		await user.click(screen.getByRole("button", { name: /new game/i }));
 
@@ -81,7 +81,7 @@ describe("Tail Tale Solitaire navigation", () => {
 		const user = userEvent.setup();
 		const { container } = render(<App dndBackend={TestBackend} />);
 
-		await user.click(screen.getByRole("button", { name: /new game/i }));
+		await user.click(screen.getByRole("button", { name: /practice game/i }));
 
 		const topRow = container.querySelector(".topRow")!;
 		expect(topRow).toBeTruthy();

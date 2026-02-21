@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
+import type { HomeOffer} from "./game/offers";
+import { getOfferMaxWin } from "./game/offers";
 
-function KittenMascot() {
+function KittenMascot({ className }: { className?: string }) {
 	return (
-		<svg viewBox="0 0 120 130" width="100" height="108" className="kittenMascot" aria-label="Cute kitten mascot">
+		<svg viewBox="0 0 120 130" width="100" height="108" className={className} aria-label="Cute kitten mascot">
 			{/* Left ear */}
 			<polygon points="22,52 37,8 54,46" fill="#ffd6e0" stroke="#e8a0b8" strokeWidth="2"/>
 			<polygon points="30,46 37,18 47,43" fill="#ffb0c8"/>
@@ -41,10 +43,53 @@ export function HomePage(props: {
 	onNewGame: () => void;
 	onCustomizeCards: () => void;
 	onWagerChallenge?: () => void;
+	players: { id: string; name: string }[];
+	activePlayerId: string;
+	onSetActivePlayer: (id: string) => void;
+	onAddPlayer: (name: string) => void;
+	activePlayerStats?: {
+		gamesPlayed: number;
+		wins: number;
+		losses: number;
+		bestScore: number | null;
+		fastestWinSeconds: number | null;
+	};
+	offers: HomeOffer[];
+	onPlayOffer: (offerId: string) => void;
 }) {
-	const { onNewGame, onCustomizeCards, onWagerChallenge } = props;
+	const {
+		onNewGame,
+		onCustomizeCards,
+		onWagerChallenge,
+		players,
+		activePlayerId,
+		onSetActivePlayer,
+		onAddPlayer,
+		activePlayerStats,
+		offers,
+		onPlayOffer,
+	} = props;
 
 	const isElectron = typeof window !== "undefined" && window.electronAPI !== undefined;
+
+	const [showAddPlayer, setShowAddPlayer] = useState(false);
+	const [newPlayerName, setNewPlayerName] = useState("");
+	const addPlayerInputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		if (showAddPlayer && addPlayerInputRef.current) {
+			addPlayerInputRef.current.focus();
+		}
+	}, [showAddPlayer]);
+
+	const handleAddPlayerSubmit = () => {
+		const trimmed = newPlayerName.trim();
+		if (trimmed) {
+			onAddPlayer(trimmed);
+			setNewPlayerName("");
+			setShowAddPlayer(false);
+		}
+	};
 
 	const handleQuit = () => {
 		if (isElectron && window.electronAPI) {
@@ -52,23 +97,139 @@ export function HomePage(props: {
 		}
 	};
 
+	const winRate = activePlayerStats && activePlayerStats.gamesPlayed > 0
+		? Math.round((activePlayerStats.wins / activePlayerStats.gamesPlayed) * 100)
+		: null;
+
 	return (
-		<div className="home">
-			<div className="homeCatHeader">
-				<KittenMascot />
-				<div>
-					<h1 className="homeTitle">Tail Tale Solitaire</h1>
-					<p className="homeSubtitle">A kitten's tale about their tail~</p>
-				</div>
+		<div className="homePage">
+			{/* Hero section */}
+			<div className="homeHero">
+				<KittenMascot className="homeHeroMascot" />
+				<h1 className="homeTitle">Tail Tale Solitaire</h1>
+				<p className="homeSubtitle">A kitten's tale about their tail~</p>
 			</div>
-			<div className="homePawDivider">🐾 🐾 🐾 🐾 🐾</div>
-			<button onClick={onNewGame}>🃏 New Game</button>
-			{onWagerChallenge && (
-				<button onClick={onWagerChallenge}>🐾 Wager Challenge</button>
+
+			{/* Player bar */}
+			<div className="homePlayerBar">
+				<div className="playerSelectRow">
+					<select
+						className="playerSelect"
+						value={activePlayerId}
+						onChange={(e) => onSetActivePlayer(e.target.value)}
+					>
+						{players.map((p) => (
+							<option key={p.id} value={p.id}>
+								{p.name}
+							</option>
+						))}
+					</select>
+					<button
+						className="addPlayerBtn"
+						onClick={() => setShowAddPlayer(!showAddPlayer)}
+						title="Add Player"
+					>
+						+
+					</button>
+				</div>
+
+				{showAddPlayer && (
+					<form
+						className="addPlayerForm"
+						onSubmit={(e) => { e.preventDefault(); handleAddPlayerSubmit(); }}
+					>
+						<input
+							ref={addPlayerInputRef}
+							className="addPlayerInput"
+							type="text"
+							placeholder="Player name..."
+							value={newPlayerName}
+							onChange={(e) => setNewPlayerName(e.target.value)}
+							maxLength={24}
+						/>
+						<button type="submit" className="addPlayerConfirm" disabled={!newPlayerName.trim()}>
+							Add
+						</button>
+						<button type="button" className="addPlayerCancel" onClick={() => { setShowAddPlayer(false); setNewPlayerName(""); }}>
+							Cancel
+						</button>
+					</form>
+				)}
+
+				{activePlayerStats && activePlayerStats.gamesPlayed > 0 && (
+					<div className="statsRow">
+						<div className="statBubble">
+							<span className="statIcon">&#127942;</span>
+							<span className="statNum">{activePlayerStats.wins}</span>
+							<span className="statLbl">Wins</span>
+						</div>
+						<div className="statBubble">
+							<span className="statIcon">&#128200;</span>
+							<span className="statNum">{winRate}%</span>
+							<span className="statLbl">Rate</span>
+						</div>
+						<div className="statBubble">
+							<span className="statIcon">&#11088;</span>
+							<span className="statNum">{activePlayerStats.bestScore ?? "-"}</span>
+							<span className="statLbl">Best</span>
+						</div>
+						{activePlayerStats.fastestWinSeconds !== null && (
+							<div className="statBubble">
+								<span className="statIcon">&#9889;</span>
+								<span className="statNum">{Math.round(activePlayerStats.fastestWinSeconds)}s</span>
+								<span className="statLbl">Fastest</span>
+							</div>
+						)}
+					</div>
+				)}
+			</div>
+
+			{/* Main actions */}
+			<div className="homeActions">
+				<button className="actionCard actionPrimary" onClick={onNewGame}>
+					<span className="actionEmoji">&#127183;</span>
+					<span className="actionLabel">Practice Game</span>
+					<span className="actionDesc">Play free, earn coins on wins</span>
+				</button>
+
+				{onWagerChallenge && (
+					<button className="actionCard actionWager" onClick={onWagerChallenge}>
+						<span className="actionEmoji">&#128062;</span>
+						<span className="actionLabel">Wager Challenge</span>
+						<span className="actionDesc">Stake coins for big rewards</span>
+					</button>
+				)}
+
+				<button className="actionCard actionDesign" onClick={onCustomizeCards}>
+					<span className="actionEmoji">&#127912;</span>
+					<span className="actionLabel">Card Designer</span>
+					<span className="actionDesc">Customize your card backs</span>
+				</button>
+			</div>
+
+			{/* Quick-play offers */}
+			{offers.length > 0 && (
+				<div className="homeOffersSection">
+					<h3 className="offersTitle">Quick Play</h3>
+					<div className="offersGrid">
+						{offers.map((offer) => (
+							<button
+								key={offer.id}
+								className="offerCard"
+								onClick={() => onPlayOffer(offer.id)}
+							>
+								<span className="offerName">{offer.title}</span>
+								<span className="offerDetail">
+									{offer.stake} &#129689; &rarr; up to {getOfferMaxWin(offer.stake, offer.contractId)} &#129689;
+								</span>
+							</button>
+						))}
+					</div>
+				</div>
 			)}
-			<button onClick={onCustomizeCards}>🎨 Customize Cards</button>
+
 			{isElectron && (
-				<button onClick={handleQuit} className="quitButton">Quit</button>
+				<button className="quitButton" onClick={handleQuit}>Quit</button>
 			)}
 		</div>
 	);

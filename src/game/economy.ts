@@ -116,23 +116,44 @@ export function checkBankruptcy(
 // ---------------------------------------------------------------------------
 
 const WALLET_STORAGE_KEY = "taletail_wallet";
+const walletKeyForPlayer = (playerId: string) => `taletail_wallet:${playerId}`;
 
-export function saveWallet(wallet: PlayerWallet): void {
+export function saveWalletForPlayer(playerId: string, wallet: PlayerWallet): void {
 	if (typeof localStorage !== "undefined") {
-		localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(wallet));
+		localStorage.setItem(walletKeyForPlayer(playerId), JSON.stringify(wallet));
 	}
 }
 
-export function loadWallet(): PlayerWallet {
-	if (typeof localStorage !== "undefined") {
-		const raw = localStorage.getItem(WALLET_STORAGE_KEY);
-		if (raw) {
-			try {
-				return JSON.parse(raw) as PlayerWallet;
-			} catch {
-				// corrupted — return fresh wallet
-			}
+export function loadWalletForPlayer(playerId: string): PlayerWallet {
+	if (typeof localStorage === "undefined") {
+		return createWallet();
+	}
+
+	const playerKey = walletKeyForPlayer(playerId);
+	const rawPlayer = localStorage.getItem(playerKey);
+
+	if (rawPlayer) {
+		try {
+			return JSON.parse(rawPlayer) as PlayerWallet;
+		} catch {
+			// JSON parse error — return fresh wallet
+			return createWallet();
 		}
 	}
+
+	// Migration logic: If player-specific key is missing, check the old "global" key.
+	const rawGlobal = localStorage.getItem(WALLET_STORAGE_KEY);
+	if (rawGlobal) {
+		try {
+			const globalWallet = JSON.parse(rawGlobal) as PlayerWallet;
+			// Migrate immediately to player-scoped storage.
+			saveWalletForPlayer(playerId, globalWallet);
+			return globalWallet;
+		} catch {
+			// Corrupted — return fresh wallet.
+		}
+	}
+
 	return createWallet();
 }
+

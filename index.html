@@ -10,7 +10,10 @@
 		<div id="root"></div>
 		<script type="module" src="/src/main.tsx"></script>
 		<script>
-			if ('serviceWorker' in navigator) {
+			// Service workers can break Capacitor apps (cached/broken shell on https://localhost/)
+			// leading to a white screen. Only register SW in regular web/PWA contexts.
+			const isNativeCapacitor = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+			if (!isNativeCapacitor && 'serviceWorker' in navigator) {
 				window.addEventListener('load', function () {
 					navigator.serviceWorker.register('/sw.js');
 				});
